@@ -121,7 +121,8 @@ class LearnScreen extends StatelessWidget {
               boxShadow: [BoxShadow(
                 color: Colors.black12,
                 blurRadius: 2.0,
-              ),]
+              ),],
+              border: Border(bottom: BorderSide(color: Colors.grey[300], width: 2)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
