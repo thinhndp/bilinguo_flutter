@@ -6,11 +6,11 @@ class Course {
   String backgroundColor;
   int levelReached;
   bool isUnlocked;
-  int levelProgress;
+  double levelProgress;
 
   Course(String id, String name, String unlockedIconUrl, String lockedIconUrl,
       String backgroundColor, int levelReached, bool isUnlocked,
-      int levelProgress,) {
+      double levelProgress,) {
     this.id = id;
     this.name = name;
     this.unlockedIconUrl = unlockedIconUrl;
