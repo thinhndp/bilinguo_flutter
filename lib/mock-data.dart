@@ -9,7 +9,7 @@ Course coBan1 = new Course(
   '#78C800',
   2,
   true,
-  0,
+  0.6,
 );
 
 Course coBan2 = new Course(
@@ -20,7 +20,7 @@ Course coBan2 = new Course(
   '#1CB0F6',
   1,
   true,
-  0,
+  0.25,
 );
 
 Course cumTu = new Course(
@@ -31,7 +31,7 @@ Course cumTu = new Course(
   '#1CB0F6',
   1,
   true,
-  0,
+  0.8,
 );
 
 Course monAn = new Course(
@@ -40,9 +40,9 @@ Course monAn = new Course(
   'unlocked-exercise-icons/mon-an.png',
   'locked-exercise-icons/mon-an.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.5,
 );
 
 Course dongVat = new Course(
@@ -51,9 +51,9 @@ Course dongVat = new Course(
   'unlocked-exercise-icons/dong-vat.png',
   'locked-exercise-icons/dong-vat.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course soNhieu = new Course(
@@ -62,9 +62,9 @@ Course soNhieu = new Course(
   'unlocked-exercise-icons/so-nhieu.png',
   'locked-exercise-icons/so-nhieu.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course soHuu = new Course(
@@ -73,9 +73,9 @@ Course soHuu = new Course(
   'unlocked-exercise-icons/so-huu.png',
   'locked-exercise-icons/so-huu.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course daiTuKhachQuan = new Course(
@@ -84,9 +84,9 @@ Course daiTuKhachQuan = new Course(
   'unlocked-exercise-icons/dai-tu-khach-quan.png',
   'locked-exercise-icons/dai-tu-khach-quan.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course quanAo = new Course(
@@ -95,9 +95,9 @@ Course quanAo = new Course(
   'unlocked-exercise-icons/quan-ao.png',
   'locked-exercise-icons/quan-ao.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course dongTu = new Course(
@@ -106,9 +106,9 @@ Course dongTu = new Course(
   'unlocked-exercise-icons/dong-tu.png',
   'locked-exercise-icons/dong-tu.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course mauSac = new Course(
@@ -117,9 +117,9 @@ Course mauSac = new Course(
   'unlocked-exercise-icons/mau-sac.png',
   'locked-exercise-icons/mau-sac.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  true,
+  0.0,
 );
 
 Course cauHoi = new Course(
@@ -128,9 +128,9 @@ Course cauHoi = new Course(
   'unlocked-exercise-icons/cau-hoi.png',
   'locked-exercise-icons/cau-hoi.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  false,
+  0.0,
 );
 
 Course lienTu = new Course(
@@ -139,9 +139,9 @@ Course lienTu = new Course(
   'unlocked-exercise-icons/lien-tu.png',
   'locked-exercise-icons/lien-tu.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  false,
+  0.0,
 );
 
 Course gioiTu = new Course(
@@ -150,9 +150,9 @@ Course gioiTu = new Course(
   'unlocked-exercise-icons/gioi-tu.png',
   'locked-exercise-icons/gioi-tu.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  false,
+  0.0,
 );
 
 Course thoiGian = new Course(
@@ -161,9 +161,9 @@ Course thoiGian = new Course(
   'unlocked-exercise-icons/thoi-gian.png',
   'locked-exercise-icons/thoi-gian.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  false,
+  0.0,
 );
 
 Course giaDinh = new Course(
@@ -172,9 +172,9 @@ Course giaDinh = new Course(
   'unlocked-exercise-icons/gia-dinh.png',
   'locked-exercise-icons/gia-dinh.png',
   '#1CB0F6',
-  1,
-  true,
   0,
+  false,
+  0.0,
 );
 
 CourseGroup courseGroup1 = new CourseGroup(
@@ -182,8 +182,8 @@ CourseGroup courseGroup1 = new CourseGroup(
     [
       [ coBan1 ],
       [ coBan2, cumTu ],
-      [ monAn, dongVat ],
-      [ soNhieu ],
+      [ monAn, dongVat, daiTuKhachQuan ],
+      [ soNhieu, soHuu ],
       [ soHuu, daiTuKhachQuan ]
     ]
 );

@@ -1,8 +1,56 @@
 import 'package:flutter/material.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class LearnScreen extends StatelessWidget {
+  renderHoneyYouShouldSeeMeInACrown(course) {
+    return course.levelReached > 0 ?
+      <Widget>[
+        Image.asset(
+          'assets/icons/crown.png',
+          width: 60,
+        ),
+        Positioned(
+          child: Text(
+            course.levelReached.toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Varela',
+              fontSize: 12,
+              color: Colors.deepOrangeAccent,
+            ),),
+        ),
+      ]
+        :
+      <Widget>[
+        Image.asset(
+          'assets/icons/crown_locked.png',
+          width: 60,
+        ),
+      ] ;
+  }
+
+  renderCourseImage(course) {
+    return course.isUnlocked ?
+      Container(
+        color: HexColor(course.backgroundColor),
+        child: Image.asset(
+          'assets/' + course.unlockedIconUrl,
+          width: 70,
+          fit: BoxFit.cover,
+        ),
+      )
+        :
+      Container(
+        color: Color(0xffe5e5e5),
+        child: Image.asset(
+          'assets/' + course.lockedIconUrl,
+          width: 70,
+          fit: BoxFit.cover,
+        ),
+      );
+  }
 
   renderCourseGroup(courseGroup) {
     return Column(
@@ -11,19 +59,35 @@ class LearnScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: row.map<Widget>((course) => (
             Container(
-              margin: EdgeInsets.fromLTRB(15, 25, 15, 0),
+              margin: EdgeInsets.fromLTRB(10, 25, 10, 0),
               child: Column(
                 children: <Widget>[
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(100.0),
-                      child: Container(
-                        color: HexColor(course.backgroundColor),
-                        child: Image.asset(
-                          'assets/' + course.unlockedIconUrl,
-                          width: 100,
-                          fit: BoxFit.cover,
+                  Stack(
+                    children: <Widget>[
+                      CircularPercentIndicator(
+                        radius: 100.0,
+                        lineWidth: 7.0,
+                        percent: course.levelProgress,
+                        startAngle: 135.0,
+                        animation: true,
+                        animationDuration: 800,
+                        circularStrokeCap: CircularStrokeCap.round,
+                        center: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: renderCourseImage(course),
                         ),
-                      )
+                        progressColor: Colors.orangeAccent,
+                        backgroundColor: Colors.black12,
+                      ),
+                      Positioned(
+                        right: -14.0,
+                        bottom: -10.0,
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: renderHoneyYouShouldSeeMeInACrown(course)
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -31,7 +95,7 @@ class LearnScreen extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Varela',
                       fontWeight: FontWeight.bold,
-                      color: Colors.black54,
+                      color: course.isUnlocked ? Colors.black54 : Colors.black26,
                       fontSize: 18.0,
                     ),
                   )
@@ -47,6 +111,7 @@ class LearnScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white,
       child: Column(
         children: <Widget>[
           Container(
