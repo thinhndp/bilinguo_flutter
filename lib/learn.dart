@@ -89,7 +89,7 @@ class LearnScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 5),
                   Text(
                     course.name,
                     style: TextStyle(
@@ -119,33 +119,59 @@ class LearnScreen extends StatelessWidget {
             decoration: new BoxDecoration(
               color: Colors.white,
               boxShadow: [BoxShadow(
-                color: Colors.grey,
+                color: Colors.black12,
                 blurRadius: 2.0,
               ),]
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(
-                  Icons.directions_run,
-                  size: 38,
-                  color: Color(0xff1cb0f6),
+                Image.asset(
+                    'assets/flags/flag-american.png',
+                    height: 30
                 ),
-                Icon(
-                  Icons.directions_car,
-                  size: 38,
-                  color: Color(0xffcf1cf6),
+                Row(
+                  children: <Widget>[
+                    Image.asset('assets/icons/crown.png', width: 35),
+                    SizedBox(width: 0,),
+                    Text(
+                      '8',
+                      style: TextStyle(
+                          fontFamily: 'Varela',
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffffc800),
+                          fontSize: 16
+                      ),),
+                  ],
                 ),
-                Icon(
-                  Icons.new_releases,
-                  size: 38,
-                  color: Color(0xfff6621c),
+                Row(
+                  children: <Widget>[
+                    Image.asset('assets/icons/streak.png', width: 30),
+                    SizedBox(width: 0,),
+                    Text(
+                      '1',
+                      style: TextStyle(
+                          fontFamily: 'Varela',
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffff9600),
+                          fontSize: 16
+                      ),),
+                  ],
                 ),
-                Icon(
-                  Icons.accessible_forward,
-                  size: 38,
-                  color: Color(0xff43f61c),
-                )
+                Row(
+                  children: <Widget>[
+                    Image.asset('assets/icons/lingot.png', width: 30),
+                    SizedBox(width: 0,),
+                    Text(
+                      '66',
+                      style: TextStyle(
+                          fontFamily: 'Varela',
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffff4b4b),
+                          fontSize: 16
+                      ),),
+                  ],
+                ),
               ],
             ),
           ),

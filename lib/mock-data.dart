@@ -39,7 +39,7 @@ Course monAn = new Course(
   'Món ăn',
   'unlocked-exercise-icons/mon-an.png',
   'locked-exercise-icons/mon-an.png',
-  '#1CB0F6',
+  '#ce82ff',
   0,
   true,
   0.5,
@@ -50,7 +50,7 @@ Course dongVat = new Course(
   'Động vật',
   'unlocked-exercise-icons/dong-vat.png',
   'locked-exercise-icons/dong-vat.png',
-  '#1CB0F6',
+  '#ce82ff',
   0,
   true,
   0.0,
@@ -83,7 +83,7 @@ Course daiTuKhachQuan = new Course(
   'Đại từ',
   'unlocked-exercise-icons/dai-tu-khach-quan.png',
   'locked-exercise-icons/dai-tu-khach-quan.png',
-  '#1CB0F6',
+  '#ce82ff',
   0,
   true,
   0.0,
@@ -105,7 +105,7 @@ Course dongTu = new Course(
   'Động từ',
   'unlocked-exercise-icons/dong-tu.png',
   'locked-exercise-icons/dong-tu.png',
-  '#1CB0F6',
+  '#ce82ff',
   0,
   true,
   0.0,
@@ -116,7 +116,7 @@ Course mauSac = new Course(
   'Màu Sắc',
   'unlocked-exercise-icons/mau-sac.png',
   'locked-exercise-icons/mau-sac.png',
-  '#1CB0F6',
+  '#ce82ff',
   0,
   true,
   0.0,
@@ -184,7 +184,7 @@ CourseGroup courseGroup1 = new CourseGroup(
       [ coBan2, cumTu ],
       [ monAn, dongVat, daiTuKhachQuan ],
       [ soNhieu, soHuu ],
-      [ soHuu, daiTuKhachQuan ]
+      [ soHuu, cumTu ]
     ]
 );
 
