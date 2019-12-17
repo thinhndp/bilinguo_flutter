@@ -1,5 +1,7 @@
 import 'models/Course.dart';
 import 'models/CourseGroup.dart';
+import 'models/Item.dart';
+import 'models/ItemGroup.dart';
 
 Course coBan1 = new Course(
   '0',
@@ -197,4 +199,35 @@ CourseGroup courseGroup2 = new CourseGroup(
       [ gioiTu ],
       [ thoiGian, giaDinh ],
     ]
+);
+
+Item streakFreeze = new Item(
+    "Streak Freeze",
+    "Streak Freeze cho phép bạn giữ nguyên streak trong một ngày bạn không có hoạt động nào.",
+    10,
+    "items/streak_freeze.png"
+);
+
+Item doubleOrNothing = new Item(
+    "Gấp đôi hoặc Mất hết",
+    "Nhận được gấp đôi số lingot từ 5 lingot mà bạn bỏ ra nếu bạn giữ được 7 ngày streak.",
+    5,
+    "items/double_or_nothing.png"
+);
+
+Item ultimateItem = new Item(
+    "ᚱᛁᚲᚨᚱᛞᛟ ᛗᛁᛚᛟᛋ",
+    "ᚨᛚᛚ ᛈᛖᛟᛈᛚᛖ ᚨᚱᛖ ᚲᚱᛖᚨᛏᛖᛞ ᛖᛩᚢᚨᛚ; ᛏᚺᛖᚤ ᚨᚱᛖ ᛖᚾᛞᛟᚹᛖᛞ ᛒᚤ ᛏᚺᛖᛁᚱ ᚲᚱᛖᚨᛏᛟᚱ ᚹᛁᛏᚺ ᚲᛖᚱᛏᚨᛁᚾ ᛁᚾᚨᛚᛁᛖᚾᚨᛒᛚᛖ ᚱᛁᚷᚺᛏᛋ; ᚨᛗᛟᚾᚷ ᛏᚺᛖᛋᛖ ᚨᚱᛖ ᛚᛁᚠᛖ, ᛚᛁᛒᛖᚱᛏᚤ, ᚨᚾᛞ ᛏᚺᛖ ᛈᚢᚱᛋᚢᛁᛏ ᛟᚠ ᚺᚨᛈᛈᛁᚾᛖᛋᛋ.",
+    99999,
+    "items/ultimate_item.jpg"
+);
+
+ItemGroup powerUps = new ItemGroup(
+    "Tăng Sức mạnh",
+    [ streakFreeze, doubleOrNothing ]
+);
+
+ItemGroup loremIpsum = new ItemGroup(
+    "Lorem Ipsum",
+    [ ultimateItem ]
 );

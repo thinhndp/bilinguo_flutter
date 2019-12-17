@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
 import 'learn.dart';
+import 'shop.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     LearnScreen(),
     PlaceholderWidget(Colors.green),
     PlaceholderWidget(Colors.blue),
-    PlaceholderWidget(Colors.yellow),
+    ShopScreen(),
     PlaceholderWidget(Colors.deepOrange),
   ];
 
