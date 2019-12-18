@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
+
+import 'achievement.dart';
 import 'learn.dart';
 import 'shop.dart';
 
@@ -14,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final List<Widget> _children = [
     LearnScreen(),
+    AchievementScreen(),
     PlaceholderWidget(Colors.green),
     PlaceholderWidget(Colors.blue),
     ShopScreen(),

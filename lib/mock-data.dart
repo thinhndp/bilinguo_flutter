@@ -1,3 +1,4 @@
+import 'models/Achievement.dart';
 import 'models/Course.dart';
 import 'models/CourseGroup.dart';
 import 'models/Item.dart';
@@ -200,6 +201,57 @@ CourseGroup courseGroup2 = new CourseGroup(
       [ thoiGian, giaDinh ],
     ]
 );
+
+List<Achievement> mockAchievements = <Achievement>[
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-flame.svg',
+    title: 'Lửa rừng',
+    description: 'Duy trì streak 2 ngày',
+    level: 0,
+    currentProgress: 1,
+    totalProgress: 2,
+  ),
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-swords.svg',
+    title: 'Quán quân',
+    description: 'Hoàn thành 10 kĩ năng của khóa học',
+    level: 1,
+    currentProgress: 8,
+    totalProgress: 10,
+  ),
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-envelope.svg',
+    title: 'Thân thiện',
+    description: 'Theo dõi 3 người bạn',
+    level: 0,
+    currentProgress: 0,
+    totalProgress: 3,
+  ),
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-medal.svg',
+    title: 'Vượt mong đợi',
+    description: 'Đạt 100 điểm KN trong 1 ngày',
+    level: 2,
+    currentProgress: 65,
+    totalProgress: 100,
+  ),
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-hourglass.svg',
+    title: 'Ngoài giờ',
+    description: 'Hoàn thành bài học trong khoảng 4 đến 8 giờ sáng',
+    level: 3,
+    currentProgress: 1,
+    totalProgress: 1,
+  ),
+  Achievement(
+    imgURL: 'https://d35aaqx5ub95lt.cloudfront.net/images/achievements/achievement-bow.svg',
+    title: 'Thiện xạ',
+    description: 'Học 5 bài học hoặc luyện tập mà không bị sai gì cả',
+    level: 0,
+    currentProgress: 1,
+    totalProgress: 5,
+  ),
+];
 
 Item streakFreeze = new Item(
     "Streak Freeze",
