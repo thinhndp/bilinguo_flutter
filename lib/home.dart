@@ -3,6 +3,7 @@ import 'placeholder_widget.dart';
 
 import 'achievement.dart';
 import 'learn.dart';
+import 'shop.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,8 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     LearnScreen(),
     AchievementScreen(),
-    PlaceholderWidget(Colors.red),
-    PlaceholderWidget(Colors.yellow),
+    PlaceholderWidget(Colors.green),
+    PlaceholderWidget(Colors.blue),
+    ShopScreen(),
     PlaceholderWidget(Colors.deepOrange),
   ];
 
