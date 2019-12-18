@@ -18,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
     LearnScreen(),
     AchievementScreen(),
     PlaceholderWidget(Colors.green),
-    PlaceholderWidget(Colors.blue),
     ShopScreen(),
     PlaceholderWidget(Colors.deepOrange),
   ];
