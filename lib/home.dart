@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Bilinguo',
       theme: ThemeData(
 //        primaryColor: Colors.white,
-        fontFamily: 'Varela',
+        fontFamily: 'Quicksand',
       ),
       home: Scaffold(
         body: SafeArea(
@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: onTabTapped,
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
+            selectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
+            unselectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
             items: [
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/learn.png', height: 30),
