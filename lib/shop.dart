@@ -11,7 +11,7 @@ class ShopScreen extends StatelessWidget {
   }
 
   renderShopRoof() {
-    double roofHeight = 55.0;
+    double roofHeight = 57.0;
     return SizedBox(
       height: roofHeight,
       child: Row(

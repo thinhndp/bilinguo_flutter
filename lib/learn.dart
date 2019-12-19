@@ -113,6 +113,7 @@ class LearnScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
+            height: 57,
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             decoration: new BoxDecoration(
               color: Colors.white,
