@@ -1,3 +1,4 @@
+import 'package:bilinguo_flutter/profile.dart';
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
 
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AchievementScreen(),
     PlaceholderWidget(Colors.green),
     ShopScreen(),
-    PlaceholderWidget(Colors.deepOrange),
+    ProfileScreen(),
   ];
 
   void onTabTapped(int index) {
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         fontFamily: 'Varela',
       ),
       home: Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: SafeArea(
           child: _children[_currentIndex],
         ),
