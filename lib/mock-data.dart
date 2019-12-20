@@ -3,6 +3,9 @@ import 'models/Course.dart';
 import 'models/CourseGroup.dart';
 import 'models/Item.dart';
 import 'models/ItemGroup.dart';
+import 'models/User.dart';
+import 'models/Post.dart';
+import 'models/Topic.dart';
 
 Course coBan1 = new Course(
   '0',
@@ -283,3 +286,58 @@ ItemGroup loremIpsum = new ItemGroup(
     "Lorem Ipsum",
     [ ultimateItem ]
 );
+
+List<User> mockUsers = [
+  User(uid: 'user0', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'),
+  User(uid: 'user1', displayName: 'Milos-san', profilePicture: 'mock-users/ricardo.jpg'),
+  User(uid: 'user2', displayName: 'Find X', profilePicture: 'mock-users/x.jpg'),
+];
+
+List<Topic> mockTopics = [
+  Topic(id: 'topic0', name: 'Từ vựng', backgroundColorGradientTop: '#00d2ff', backgroundColorGradientBottom: '#3a7bd5'),
+  Topic(id: 'topic1', name: 'Ngữ pháp', backgroundColorGradientTop: '#f5af19', backgroundColorGradientBottom: '#f12711'),
+  Topic(id: 'topic2', name: 'Phát âm', backgroundColorGradientTop: '#93f9b9', backgroundColorGradientBottom: '#1d976c'),
+  Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7'),
+];
+
+List<Post> mockPost = [
+  Post(
+    id: 'post0',
+    title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',
+    authorUid: 'user0',
+    topicId: 'topic2',
+    content: '',
+    upvoteCount: 62,
+    downvoteCount: 20,
+    postedTime: '1 hour(s) ago',
+    upvoters: [ 'user1' ],
+    downvoters: [ 'user2' ],
+    commentCount: 3,
+  ),
+  Post(
+    id: 'post1',
+    title: 'Alo alo đâu rồi những con chó Hitler, Stalin?? Đm chúng m đâu',
+    authorUid: 'user1',
+    topicId: 'topic1',
+    content: '',
+    upvoteCount: 12,
+    downvoteCount: 55,
+    postedTime: '1 hour(s) ago',
+    upvoters: [ 'user0' ],
+    downvoters: [ 'user1' ],
+    commentCount: 15,
+  ),
+  Post(
+    id: 'post2',
+    title: 'warning: The dev dependency on flutter_launcher_icons is unnecessary because there is also a normal dependency on that package. (unnecessary_dev_dependency at [bilinguo_flutter] pubspec.yaml:33)',
+    authorUid: 'user2',
+    topicId: 'topic3',
+    content: '',
+    upvoteCount: 1,
+    downvoteCount: 1,
+    postedTime: '1 hour(s) ago',
+    upvoters: [ 'user2' ],
+    downvoters: [ 'user0' ],
+    commentCount: 5,
+  ),
+];

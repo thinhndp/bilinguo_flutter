@@ -9,12 +9,13 @@ class Post {
   int upvoteCount;
   int downvoteCount;
   String postedTime; //TODO: calculate time passed since created
-  Set<User> upvoter;
-  Set<User> downvoter;
+  List<String> upvoters;
+  List<String> downvoters;
+  int commentCount; //TODO: change to array
 
-  Post(String id, String title, String authorUid, String topicId, String content,
-      int upvoteCount, int downvoteCount, String postedTime, Set<User>upvoter,
-      Set<User> downvoter) {
+  Post({String id, String title, String authorUid, String topicId, String content,
+      int upvoteCount, int downvoteCount, String postedTime, List<String>upvoters,
+      List<String> downvoters, int commentCount}) {
     this.id = id;
     this.title = title;
     this.authorUid = authorUid;
@@ -23,7 +24,8 @@ class Post {
     this.upvoteCount = upvoteCount;
     this.downvoteCount = downvoteCount;
     this.postedTime = postedTime;
-    this.upvoter = upvoter;
-    this.downvoter = downvoter;
+    this.upvoters = upvoters;
+    this.downvoters = downvoters;
+    this.commentCount = commentCount;
   }
 }
