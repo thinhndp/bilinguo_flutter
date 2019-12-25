@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'utils/HexColor.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
+import './models/Topic.dart';
 
 class ForumScreen extends StatelessWidget {
+  getUserFromUid(uid) {
+    return mockUsers.firstWhere((user) => user.uid == uid);
+  }
+
+  Topic getTopicById(topicId) {
+    return mockTopics.firstWhere((topic) => topic.id == topicId);
+  }
+
   Widget _buildHeader() {
     return Container(
       height: 57,
@@ -43,6 +52,39 @@ class ForumScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTopicAll() {
+    //This is the 'All' filter
+    final _defaultColor = '#2c3e50';
+    return Container(
+      margin: EdgeInsets.only(right: 10.0),
+      width: 133.0,
+      height: 83.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        color: HexColor(_defaultColor),
+        // gradient: LinearGradient(
+        //   begin: Alignment.topCenter,
+        //   end: Alignment.bottomCenter,
+        //   stops: [0, 1],
+        //   colors: [
+        //     HexColor(topic.backgroundColorGradientTop),
+        //     HexColor(topic.backgroundColorGradientBottom),
+        //   ],
+        // ),
+      ),
+      child: Center(
+        child: Text(
+          '#Tất cả',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTopic(topic) {
     return Container(
       margin: EdgeInsets.only(right: 10.0),
@@ -50,15 +92,16 @@ class ForumScreen extends StatelessWidget {
       height: 83.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0, 1],
-          colors: [
-            HexColor(topic.backgroundColorGradientTop),
-            HexColor(topic.backgroundColorGradientBottom),
-          ],
-        ),
+        color: HexColor(topic.backgroundColor),
+        // gradient: LinearGradient(
+        //   begin: Alignment.topCenter,
+        //   end: Alignment.bottomCenter,
+        //   stops: [0, 1],
+        //   colors: [
+        //     HexColor(topic.backgroundColorGradientTop),
+        //     HexColor(topic.backgroundColorGradientBottom),
+        //   ],
+        // ),
       ),
       child: Center(
         child: Text(
@@ -77,9 +120,12 @@ class ForumScreen extends StatelessWidget {
     return ListView(
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
-      children: topics.map<Widget>((topic) => (
-        _buildTopic(topic)
-      )).toList(),
+      children: [
+        _buildTopicAll(),
+        ...topics.map<Widget>((topic) => (
+          _buildTopic(topic)
+        )).toList()
+      ],
     );
   }
 
@@ -99,7 +145,16 @@ class ForumScreen extends StatelessWidget {
     );
   }
 
+  isPostUpvotedByCurrentUser(currentUser, post) {
+    return post.upvoters.contains(currentUser);
+  }
+  isPostDownvotedByCurrentUser(currentUser, post) {
+    return post.downvoters.contains(currentUser);
+  }
+
   Widget _buildPost(post) {
+    final _currentUserId = 'user1'; //
+    final _postAuthor = getUserFromUid(post.authorUid);
     return Container(
       margin: EdgeInsets.only(top: 20.0),
       padding: EdgeInsets.all(16.0),
@@ -118,7 +173,7 @@ class ForumScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: AssetImage('assets/mock-users/ricardo.jpg'),
+                    backgroundImage: AssetImage('assets/' + _postAuthor.profilePicture),
                     radius: 24.0,
                   ),
                   SizedBox(width: 10.0,),
@@ -126,7 +181,7 @@ class ForumScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Admin',
+                        _postAuthor.displayName,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
@@ -146,10 +201,13 @@ class ForumScreen extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  Icon(Icons.comment, color: Color(0xff777777),),
+                  Icon(
+                    Icons.comment,
+                    color: Color(0xff777777),
+                  ),
                   SizedBox(width: 3,),
                   Text(
-                    '15',
+                    post.commentCount.toString(),
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
@@ -179,10 +237,13 @@ class ForumScreen extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Icon(Icons.thumb_up, color: Color(0xff777777),),
+                  Icon(
+                    Icons.thumb_up,
+                    color: isPostUpvotedByCurrentUser(_currentUserId, post) ? Color(0xff1CB0F6) : Color(0xff777777),
+                  ),
                   SizedBox(width: 3.0,),
                   Text(
-                    '62',
+                    post.upvoteCount.toString(),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 16.0,
@@ -190,10 +251,13 @@ class ForumScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 10.0,),
-                  Icon(Icons.thumb_down, color: Color(0xff777777),),
+                  Icon(
+                    Icons.thumb_down,
+                    color: isPostDownvotedByCurrentUser(_currentUserId, post) ? Color(0xffF6621C) : Color(0xff777777),
+                  ),
                   SizedBox(width: 3.0,),
                   Text(
-                    '62',
+                    post.downvoteCount.toString(),
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 16.0,
@@ -206,11 +270,12 @@ class ForumScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  color: Color(0xff25C18A),
+                  color: HexColor(getTopicById(post.topicId).backgroundColor)
+                  // color: Color(0xff25C18A),
                 ),
                 child: Center(
                   child: Text(
-                    'Từ vựng'.toUpperCase(),
+                    (getTopicById(post.topicId).name).toUpperCase(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -249,13 +314,26 @@ class ForumScreen extends StatelessWidget {
           _buildHeader(),
           Container(
             child: Expanded(
-              child: ListView(
-                padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
-                shrinkWrap: true,
+              child: Stack(
                 children: <Widget>[
-                  _buildPopularTopics(),
-                  SizedBox(height: 20.0,),
-                  _buildPopularPosts(),
+                  ListView(
+                    padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      _buildPopularTopics(),
+                      SizedBox(height: 20.0,),
+                      _buildPopularPosts(),
+                    ],
+                  ),
+                  Container(
+                    alignment: AlignmentDirectional.bottomEnd,
+                    padding: EdgeInsets.all(20.0),
+                    child: FloatingActionButton(
+                      onPressed: () {},
+                      backgroundColor: HexColor('1cb0f6'),
+                      child: Icon(Icons.comment),
+                    ),
+                  ),
                 ],
               ),
             ),

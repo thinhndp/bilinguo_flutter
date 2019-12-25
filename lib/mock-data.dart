@@ -294,10 +294,10 @@ List<User> mockUsers = [
 ];
 
 List<Topic> mockTopics = [
-  Topic(id: 'topic0', name: 'Từ vựng', backgroundColorGradientTop: '#00d2ff', backgroundColorGradientBottom: '#3a7bd5'),
-  Topic(id: 'topic1', name: 'Ngữ pháp', backgroundColorGradientTop: '#f5af19', backgroundColorGradientBottom: '#f12711'),
-  Topic(id: 'topic2', name: 'Phát âm', backgroundColorGradientTop: '#93f9b9', backgroundColorGradientBottom: '#1d976c'),
-  Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7'),
+  Topic(id: 'topic0', name: 'Từ vựng', backgroundColorGradientTop: '#00d2ff', backgroundColorGradientBottom: '#3a7bd5', backgroundColor: '1CB0F6'),
+  Topic(id: 'topic1', name: 'Ngữ pháp', backgroundColorGradientTop: '#f5af19', backgroundColorGradientBottom: '#f12711', backgroundColor: 'F6621C'),
+  Topic(id: 'topic2', name: 'Phát âm', backgroundColorGradientTop: '#93f9b9', backgroundColorGradientBottom: '#1d976c', backgroundColor: '43F61C'),
+  Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7', backgroundColor: 'CF1CF6'),
 ];
 
 List<Post> mockPost = [
