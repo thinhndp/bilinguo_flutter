@@ -300,7 +300,7 @@ List<Topic> mockTopics = [
   Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7', backgroundColor: 'CF1CF6'),
 ];
 
-List<Post> mockPost = [
+List<Post> mockPosts = [
   Post(
     id: 'post0',
     title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',

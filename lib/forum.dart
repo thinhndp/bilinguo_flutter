@@ -3,141 +3,166 @@ import 'utils/HexColor.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
 import './models/Topic.dart';
+import './models/Post.dart';
 
-class ForumScreen extends StatelessWidget {
-  getUserFromUid(uid) {
+class ForumWidget extends StatefulWidget {
+  @override
+  _ForumWidgetState createState() => _ForumWidgetState();
+}
+
+class _ForumWidgetState extends State<ForumWidget> {
+  String _chosenTopicId = '';
+  List<Post> _posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _chosenTopicId = '';
+    _posts = mockPosts; //TODO: API call
+  }
+
+  _getUserByUid(uid) {
     return mockUsers.firstWhere((user) => user.uid == uid);
   }
 
-  Topic getTopicById(topicId) {
+  _getTopicById(topicId) {
     return mockTopics.firstWhere((topic) => topic.id == topicId);
   }
+  _getFilteredPosts() {
+    if (_chosenTopicId == '') {
+      return [..._posts];
+    }
+    return (_posts.where((post) => post.topicId == _chosenTopicId)).toList();
+    // return _posts;
+  }
 
-  Widget _buildHeader() {
-    return Container(
-      height: 57,
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(
-          color: Colors.black12,
-          blurRadius: 2.0,
-        ),],
-        border: Border(bottom: BorderSide(color: Colors.grey[300], width: 2)),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Center(
-            child: Text(
-              "Thảo luận",
-              style: TextStyle(
-                color: HexColor("1cb0f6"),
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: Icon(Icons.search),
-              tooltip: 'Tìm kiếm bài viết',
-              color: HexColor("1cb0f6"),
-              onPressed: () {},
-            ),
-          )
-        ],
-      ),
-    );
+  _handleTopicClick(topicId) {
+    // print(topicId);
+    setState(() {
+      _chosenTopicId = topicId;
+    });
   }
 
   Widget _buildTopicAll() {
     //This is the 'All' filter
+
+    final _width = _chosenTopicId == '' ? 150.0 : 133.0;
+    final _marginVertical = _chosenTopicId == '' ? 0.0 : 5.375;
+    final _fontSize = _chosenTopicId == '' ? 24.0 : 20.0;
     final _defaultColor = '#2c3e50';
-    return Container(
-      margin: EdgeInsets.only(right: 10.0),
-      width: 133.0,
-      height: 83.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        color: HexColor(_defaultColor),
-        // gradient: LinearGradient(
-        //   begin: Alignment.topCenter,
-        //   end: Alignment.bottomCenter,
-        //   stops: [0, 1],
-        //   colors: [
-        //     HexColor(topic.backgroundColorGradientTop),
-        //     HexColor(topic.backgroundColorGradientBottom),
-        //   ],
-        // ),
-      ),
-      child: Center(
-        child: Text(
-          '#Tất cả',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold
-          ),
+    return Material(
+        type: MaterialType.transparency,
+        child: AnimatedContainer(
+          margin: EdgeInsets.only(right: 10.0, bottom: _marginVertical, top: _marginVertical),
+          width: _width,
+          duration: Duration(milliseconds: 100),
+          child: Ink(
+            width: _width,
+            // height: 83.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              color: HexColor(_defaultColor).withOpacity(_chosenTopicId == '' ? 1 : 0.5),
+              // gradient: LinearGradient(
+              //   begin: Alignment.topCenter,
+              //   end: Alignment.bottomCenter,
+              //   stops: [0, 1],
+              //   colors: [
+              //     HexColor(topic.backgroundColorGradientTop),
+              //     HexColor(topic.backgroundColorGradientBottom),
+              //   ],
+              // ),
+            ),
+            child: InkWell(
+              onTap: () => _handleTopicClick(''),
+              child: Center(
+                child: Text(
+                  '#Tất cả',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: _fontSize,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ),
+          )
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildTopic(topic) {
-    return Container(
-      margin: EdgeInsets.only(right: 10.0),
-      width: 133.0,
-      height: 83.0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        color: HexColor(topic.backgroundColor),
-        // gradient: LinearGradient(
-        //   begin: Alignment.topCenter,
-        //   end: Alignment.bottomCenter,
-        //   stops: [0, 1],
-        //   colors: [
-        //     HexColor(topic.backgroundColorGradientTop),
-        //     HexColor(topic.backgroundColorGradientBottom),
-        //   ],
-        // ),
-      ),
-      child: Center(
-        child: Text(
-          '#' + topic.name,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold
+    final _width = _chosenTopicId == topic.id ? 150.0 : 133.0;
+    final _marginVertical = _chosenTopicId == topic.id ? 0.0 : 5.375;
+    final _fontSize = _chosenTopicId == topic.id ? 24.0 : 20.0;
+    return Material(
+      type: MaterialType.transparency,
+      child: AnimatedContainer(
+        margin: EdgeInsets.only(right: 10.0, top: _marginVertical, bottom: _marginVertical),
+        width: _width,
+        duration: Duration(milliseconds: 100),
+        child: Ink(
+          width: _width,
+          // height: _chosenTopicId == topic.id ? 93.75 : 83.0,
+          // width: 133.0,
+          // height: 83.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            color: HexColor(topic.backgroundColor).withOpacity(_chosenTopicId == topic.id ? 1 : 0.5),
+            
+            // gradient: LinearGradient(
+            //   begin: Alignment.topCenter,
+            //   end: Alignment.bottomCenter,
+            //   stops: [0, 1],
+            //   colors: [
+            //     HexColor(topic.backgroundColorGradientTop),
+            //     HexColor(topic.backgroundColorGradientBottom),
+            //   ],
+            // ),
           ),
-        ),
+          child: InkWell(
+            // splashColor: Colors.white,
+            // splashColor: HexColor(topic.backgroundColor),
+            onTap: () => _handleTopicClick(topic.id),
+            child: Center(
+              child: Text(
+                '#' + topic.name,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: _fontSize,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+          ),
+        )
       ),
     );
   }
 
   Widget _buildTopicList(topics) {
     return ListView(
-      scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
-      children: [
-        _buildTopicAll(),
-        ...topics.map<Widget>((topic) => (
-          _buildTopic(topic)
-        )).toList()
-      ],
-    );
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        children: [
+          _buildTopicAll(),
+          ...topics.map<Widget>((topic) => (
+            _buildTopic(topic)
+          )).toList()
+        ],
+      );
   }
 
   Widget _buildPopularTopics() {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Text('Chủ đề phổ biến', style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold )),
           Container(
             margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-            height: 83.0,
+            // height: 83.0,
+            height: 93.75,
             child: _buildTopicList(mockTopics),
           ),
         ],
@@ -154,7 +179,7 @@ class ForumScreen extends StatelessWidget {
 
   Widget _buildPost(post) {
     final _currentUserId = 'user1'; //
-    final _postAuthor = getUserFromUid(post.authorUid);
+    final _postAuthor = _getUserByUid(post.authorUid);
     return Container(
       margin: EdgeInsets.only(top: 20.0),
       padding: EdgeInsets.all(16.0),
@@ -270,12 +295,12 @@ class ForumScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  color: HexColor(getTopicById(post.topicId).backgroundColor)
+                  color: HexColor(_getTopicById(post.topicId).backgroundColor)
                   // color: Color(0xff25C18A),
                 ),
                 child: Center(
                   child: Text(
-                    (getTopicById(post.topicId).name).toUpperCase(),
+                    (_getTopicById(post.topicId).name).toUpperCase(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -297,9 +322,7 @@ class ForumScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Bài đăng phổ biến', style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold )),
-          _buildPost(mockPost[0]),
-          _buildPost(mockPost[1]),
-          _buildPost(mockPost[2]),
+          ..._getFilteredPosts().map<Widget>((post) => (_buildPost(post))).toList(),
         ],
       ),
     );
@@ -308,11 +331,6 @@ class ForumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          _buildHeader(),
-          Container(
             child: Expanded(
               child: Stack(
                 children: <Widget>[
@@ -337,7 +355,60 @@ class ForumScreen extends StatelessWidget {
                 ],
               ),
             ),
+          );
+  }
+
+}
+
+class ForumScreen extends StatelessWidget {
+
+  Widget _buildHeader() {
+    return Container(
+      height: 57,
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(
+          color: Colors.black12,
+          blurRadius: 2.0,
+        ),],
+        border: Border(bottom: BorderSide(color: Colors.grey[300], width: 2)),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: Text(
+              "Thảo luận",
+              style: TextStyle(
+                color: HexColor("1cb0f6"),
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
           ),
+          Container(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: Icon(Icons.search),
+              tooltip: 'Tìm kiếm bài viết',
+              color: HexColor("1cb0f6"),
+              onPressed: () {},
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          _buildHeader(),
+          ForumWidget(),
         ],
       ),
     );
