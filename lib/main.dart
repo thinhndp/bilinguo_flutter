@@ -1,11 +1,12 @@
+import 'package:bilinguo_flutter/learn_detail.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
-import 'package:bilinguo_flutter/redux/actions.dart';
 import 'package:bilinguo_flutter/redux/reducers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:http/http.dart' as http;
 import 'home.dart';
 import 'signIn.dart';
 
@@ -26,8 +27,12 @@ void main() {
             converter: (Store<AppState> store) => ViewModel.create(store),
             builder: (context, ViewModel viewModel) => WelcomeScreen(viewModel),
           ),
-          '/home': (context) => HomeScreen(),
+          '/home': (context) => StoreConnector(
+            converter: (Store<AppState> store) => ViewModel.create(store),
+            builder: (context, ViewModel viewModel) => HomeScreen(viewModel),
+          ),
           '/sign-in': (context) => SignInScreen(),
+          '/learn-detail': (context) => LearnDetailScreen(),
         },
       )
     )
@@ -156,6 +161,43 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   textColor: Colors.lightGreen,
                   child: Text(
                       widget._viewModel.currentUser == null ? 'Đăng nhập'.toUpperCase() : 'Đăng xuất'.toUpperCase(),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container (
+                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                width: double.infinity,
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0)
+                  ),
+                  elevation: 4,
+                  padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+                  onPressed: () async {
+                    final tokenStr = (await widget._viewModel.currentUser.getIdToken()).token;
+
+                    print('called');
+
+                    http.post(
+                      'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getSessionQuestion',
+                      headers: { 'Authorization': 'Bearer ' + tokenStr },
+                      body: {  }
+                    )
+                      .then((response) {
+                        print('complete');
+                        print(response.body);
+                      })
+                      .catchError((err) {
+                        print('error');
+                        print(err);
+                      });
+                  },
+                  color: Colors.white,
+                  textColor: Colors.lightGreen,
+                  child: Text(
+                      'Test',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
                   ),
                 ),

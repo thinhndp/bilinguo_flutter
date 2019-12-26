@@ -13,6 +13,7 @@ Course coBan1 = new Course(
   2,
   true,
   0.6,
+  10,
 );
 
 Course coBan2 = new Course(
@@ -24,6 +25,7 @@ Course coBan2 = new Course(
   1,
   true,
   0.25,
+  10,
 );
 
 Course cumTu = new Course(
@@ -35,6 +37,7 @@ Course cumTu = new Course(
   1,
   true,
   0.8,
+  10,
 );
 
 Course monAn = new Course(
@@ -46,6 +49,7 @@ Course monAn = new Course(
   0,
   true,
   0.5,
+  10,
 );
 
 Course dongVat = new Course(
@@ -57,6 +61,7 @@ Course dongVat = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course soNhieu = new Course(
@@ -68,6 +73,7 @@ Course soNhieu = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course soHuu = new Course(
@@ -79,6 +85,7 @@ Course soHuu = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course daiTuKhachQuan = new Course(
@@ -90,6 +97,7 @@ Course daiTuKhachQuan = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course quanAo = new Course(
@@ -101,6 +109,7 @@ Course quanAo = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course dongTu = new Course(
@@ -112,6 +121,7 @@ Course dongTu = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course mauSac = new Course(
@@ -123,6 +133,7 @@ Course mauSac = new Course(
   0,
   true,
   0.0,
+  10,
 );
 
 Course cauHoi = new Course(
@@ -134,6 +145,7 @@ Course cauHoi = new Course(
   0,
   false,
   0.0,
+  10,
 );
 
 Course lienTu = new Course(
@@ -145,6 +157,7 @@ Course lienTu = new Course(
   0,
   false,
   0.0,
+  10,
 );
 
 Course gioiTu = new Course(
@@ -156,6 +169,7 @@ Course gioiTu = new Course(
   0,
   false,
   0.0,
+  10,
 );
 
 Course thoiGian = new Course(
@@ -167,6 +181,7 @@ Course thoiGian = new Course(
   0,
   false,
   0.0,
+  10,
 );
 
 Course giaDinh = new Course(
@@ -178,6 +193,7 @@ Course giaDinh = new Course(
   0,
   false,
   0.0,
+  10,
 );
 
 CourseGroup courseGroup1 = new CourseGroup(

@@ -26,13 +26,14 @@ class _SignInScreenState extends State<SignInScreen> {
   // TextEditingController _passwordController = new TextEditingController();
 
   Future _handleSignIn(ViewModel viewModel) async {
-    print('email ' +  _email);
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
+        print('handle' + _email);
         final FirebaseUser user = (await _auth.signInWithEmailAndPassword(email: _email, password: _password)).user;
         viewModel.onSetCurrentUser(user);
-        print(user);
+        print((await user.getIdToken()).token);
+        print('Sign in successfully.');
       } on PlatformException catch (err) {
         print(err);
         // switch (err.code) {

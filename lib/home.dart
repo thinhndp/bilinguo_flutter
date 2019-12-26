@@ -1,3 +1,5 @@
+import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
 
@@ -6,6 +8,10 @@ import 'learn.dart';
 import 'shop.dart';
 
 class HomeScreen extends StatefulWidget {
+  final ViewModel _viewModel;
+
+  HomeScreen(this._viewModel);
+
   @override
   State<StatefulWidget> createState() {
     return _HomeScreenState();
@@ -13,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+
   int _currentIndex = 0;
   final List<Widget> _children = [
     LearnScreen(),
@@ -27,6 +35,21 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentIndex = index;
     });
   }
+
+  // @override void initState() {
+  //   super.initState();
+
+  //   // _auth.currentUser()
+  //   //   .then((currentUser) {
+  //   //     widget._viewModel.onSetCurrentUser(currentUser);
+  //   //     currentUser.getIdToken().then((onValue) {
+  //   //       print(onValue.token);
+  //   //     });
+  //   //   })
+  //   //   .catchError((err) {
+  //   //     print(err);
+  //   //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/learn.png', height: 30),
                 icon: Image.asset('assets/icons/learn_inactive.png', height: 30),
-                title: Text('Bài tập'),
+                title: Text('Bài học'),
               ),
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/achievements.png', height: 30),
