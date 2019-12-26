@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         fontFamily: 'Quicksand',
       ),
       home: Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: SafeArea(
           child: _children[_currentIndex],
         ),
