@@ -6,6 +6,7 @@ import 'placeholder_widget.dart';
 import 'achievement.dart';
 import 'learn.dart';
 import 'shop.dart';
+import 'forum.dart';
 
 class HomeScreen extends StatefulWidget {
   final ViewModel _viewModel;
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     LearnScreen(),
     AchievementScreen(),
-    PlaceholderWidget(Colors.green),
+    ForumScreen(),
     ShopScreen(),
     PlaceholderWidget(Colors.deepOrange),
   ];
@@ -58,9 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Bilinguo',
       theme: ThemeData(
 //        primaryColor: Colors.white,
-        fontFamily: 'Varela',
+        fontFamily: 'Quicksand',
       ),
       home: Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: SafeArea(
           child: _children[_currentIndex],
         ),
@@ -71,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: onTabTapped,
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
+            selectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
+            unselectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
             items: [
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/learn.png', height: 30),

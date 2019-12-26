@@ -11,7 +11,7 @@ class ShopScreen extends StatelessWidget {
   }
 
   renderShopRoof() {
-    double roofHeight = 55.0;
+    double roofHeight = 57.0;
     return SizedBox(
       height: roofHeight,
       child: Row(
@@ -170,32 +170,45 @@ class ShopScreen extends StatelessWidget {
             ),
           ),
           Stack(
-            alignment: AlignmentDirectional.center,
+            alignment: Alignment.topCenter,
             children: <Widget>[
               renderShopRoof(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Cửa hàng',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18
-                    )
-                  ),
-                  SizedBox(width: 15),
-                  Image.asset('assets/icons/lingot.png', height: 24,),
-                  SizedBox(width: 5),
-                  Text(
-                      '68',
-                      style: TextStyle(
+              Container(
+                height: 57,
+                width: double.infinity,
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        "Cửa hàng",
+                        style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Image.asset('assets/icons/lingot.png', height: 24,),
+                          SizedBox(width: 5),
+                          Text(
+                              '68',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18
+                              )
+                          ),
+                        ],
                       )
-                  ),
-                ],
+                    )
+                  ],
+                ),
               )
             ],
           ),

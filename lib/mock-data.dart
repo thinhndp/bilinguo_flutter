@@ -3,6 +3,10 @@ import 'models/Course.dart';
 import 'models/CourseGroup.dart';
 import 'models/Item.dart';
 import 'models/ItemGroup.dart';
+import 'models/User.dart';
+import 'models/Post.dart';
+import 'models/Topic.dart';
+import 'models/Comment.dart';
 
 Course coBan1 = new Course(
   '0',
@@ -299,3 +303,94 @@ ItemGroup loremIpsum = new ItemGroup(
     "Lorem Ipsum",
     [ ultimateItem ]
 );
+
+List<User> mockUsers = [
+  User(uid: 'user0', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'),
+  User(uid: 'user1', displayName: 'Milos-san', profilePicture: 'mock-users/ricardo.jpg'),
+  User(uid: 'user2', displayName: 'Find X', profilePicture: 'mock-users/x.jpg'),
+];
+
+List<Topic> mockTopics = [
+  Topic(id: 'topic0', name: 'Từ vựng', backgroundColorGradientTop: '#00d2ff', backgroundColorGradientBottom: '#3a7bd5', backgroundColor: '1CB0F6'),
+  Topic(id: 'topic1', name: 'Ngữ pháp', backgroundColorGradientTop: '#f5af19', backgroundColorGradientBottom: '#f12711', backgroundColor: 'F6621C'),
+  Topic(id: 'topic2', name: 'Phát âm', backgroundColorGradientTop: '#93f9b9', backgroundColorGradientBottom: '#1d976c', backgroundColor: '43F61C'),
+  Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7', backgroundColor: 'CF1CF6'),
+];
+
+List<Post> mockPosts = [
+  Post(
+    id: 'post0',
+    title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',
+    authorUid: 'user0',
+    topicId: 'topic2',
+    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    upvoteCount: 1,
+    downvoteCount: 1,
+    postedTime: '2019-12-26T01:35:01+0700',
+    upvoters: [ 'user1' ],
+    downvoters: [ 'user2' ],
+    commentCount: 3,
+    comments: [
+      Comment(
+        id: 'comment0',
+        authorUid: 'user1',
+        content: 'Lorem cmm chứ lorem',
+        upvoteCount: 1,
+        downvoteCount: 1,
+        postedTime: '2019-12-26T01:45:01+0700',
+        upvoters: [ 'user1' ],
+        downvoters: [ 'user2' ],
+      ),
+      Comment(
+        id: 'comment1',
+        authorUid: 'user2',
+        content: 'Nói hay lắm bạn tôi',
+        upvoteCount: 1,
+        downvoteCount: 0,
+        postedTime: '2019-12-26T01:38:01+0700',
+        upvoters: [ 'user1' ],
+        downvoters: [],
+      ),
+      Comment(
+        id: 'comment2',
+        authorUid: 'user2',
+        content: 'CHXHCNVNMN!',
+        upvoteCount: 0,
+        downvoteCount: 1,
+        postedTime: '2019-12-26T01:37:01+0700',
+        upvoters: [],
+        downvoters: [ 'user1' ],
+      ),
+    ]
+  ),
+  Post(
+    id: 'post1',
+    title: 'Alo alo đâu rồi những con chó Hitler, Stalin?? Đm chúng m đâu',
+    authorUid: 'user1',
+    topicId: 'topic1',
+    content: '',
+    upvoteCount: 1,
+    downvoteCount: 1,
+    postedTime: '2019-12-26T13:35:01+0700',
+    upvoters: [ 'user0' ],
+    downvoters: [ 'user1' ],
+    commentCount: 15,
+    comments: [],
+  ),
+  Post(
+    id: 'post2',
+    title: 'warning: The dev dependency on flutter_launcher_icons is unnecessary because there is also a normal dependency on that package. (unnecessary_dev_dependency at [bilinguo_flutter] pubspec.yaml:33)',
+    authorUid: 'user2',
+    topicId: 'topic3',
+    content: '',
+    upvoteCount: 1,
+    downvoteCount: 1,
+    postedTime: '2019-12-24T13:35:01+0700',
+    upvoters: [ 'user2' ],
+    downvoters: [ 'user0' ],
+    commentCount: 5,
+    comments: [],
+  ),
+];
+
+User currentUser = User(uid: 'user1', displayName: 'Milos-san', profilePicture: 'mock-users/ricardo.jpg');
