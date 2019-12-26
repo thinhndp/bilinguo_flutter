@@ -6,6 +6,7 @@ import './models/Topic.dart';
 import './models/Comment.dart';
 import './mock-data.dart';
 import './utils/Helper.dart';
+import 'package:uuid/uuid.dart';
 
 class ForumPostWidget extends StatefulWidget {
   const ForumPostWidget({ this.post });
@@ -20,6 +21,8 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   List<User> _users = [];
   List<Topic> _topics = [];
   List<Post> _posts = [];
+  // String _newComment = '';
+  final commentController = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +32,13 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     _topics = mockTopics; // TODO: API GET
     _posts = mockPosts; // TODO: API GET
   }
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
+
 
   _getUserByUid(uid) {
     return _users.firstWhere((user) => user.uid == uid);
@@ -50,6 +60,136 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   }
   _isPostDownvotedByCurrentUser(post) {
     return post.downvoters.contains(currentUser.uid);
+  }
+
+  // _handleNewCommentChanged(comment) {
+  //   setState(() {
+  //     newComment = commentController.text.trim();
+  //   });
+  // }
+
+  _handlePostNewComment(context) {
+    if (commentController.text.trim() == '') {
+      return;
+    }
+    print(commentController.text.trim());
+    var uuid = Uuid();
+    Comment newComment = new Comment(
+      id: uuid.v4(),
+      authorUid: currentUser.uid,
+      content: commentController.text.trim(),
+      upvoteCount: 0,
+      downvoteCount: 0,
+      postedTime: DateTime.now().toIso8601String(),
+      upvoters: [],
+      downvoters: [],
+    );
+    print(_posts.length);
+    var postIndex = _posts.indexWhere((post) => post.id == _post.id);
+    var post = _post;
+    post.comments.add(newComment);
+    mockPosts[postIndex] = post; //TODO: API POST
+    setState(() {
+      _posts = mockPosts; //TODO: API GET
+      _post = _posts[postIndex];
+    });
+    // Scaffold.of(context).showSnackBar(SnackBar(
+    //   content: Text('Đăng bình luận thành công!'),
+    //   backgroundColor: Color(0xff00C851),
+    // ));
+    Navigator.of(context).pop();
+    commentController.clear();
+    // var post = _post;
+  }
+
+  showCommentBottomSheet(context) {
+    print(_post.id);
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Container(
+            height: 300.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_downward),
+                          tooltip: 'Quay về',
+                          // color: HexColor("1cb0f6"),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        Text(
+                          'Bình luận mới',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(right: 16.0),
+                      child: InkWell(
+                        onTap: () => _handlePostNewComment(context),
+                        child: Text(
+                          'Đăng'.toUpperCase(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                            color: commentController.text.trim() == '' ? Color(0xFFDDDDDD) : Color(0xFF1CB0F6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(color: Color(0xffeeeeee), height: 2),
+                Container(
+                  padding: EdgeInsets.only(left: 14.0, right: 14.0, bottom: 14.0),
+                  child: TextField(
+                    // expands: true,
+                    // onChanged: (comment) => _handleNewCommentChanged(comment),
+                    controller: commentController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: InputDecoration.collapsed(
+                      border: InputBorder.none,
+                      hintText: 'Nhập nội dung bài viết',
+                    ),
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                    onTap: () => {},
+                  ),
+                ),
+                // TextField(
+                //   // expands: true,
+                //   // controller: postContentController,
+                //   keyboardType: TextInputType.multiline,
+                //   maxLines: null,
+                //   decoration: InputDecoration.collapsed(
+                //     border: InputBorder.none,
+                //     hintText: 'Nhập nội dung bài viết',
+                //   ),
+                //   style: TextStyle(
+                //     fontSize: 18.0,
+                //   ),
+                //   onTap: () => {},
+                // ),
+              ],
+            ),
+          )
+        );
+      },
+    );
   }
 
   _handleVoteClick(post, voteType) {
@@ -124,7 +264,16 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)]
+          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black26,
+          //     blurRadius: 0.0,
+          //     offset: Offset(0.0, 1),
+          //     spreadRadius: 3.0,
+          //   )
+          // ],
+          
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,11 +543,31 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
+    // return ListView(
+    //   shrinkWrap: true,
+    //   children: <Widget>[
+    //     _buildPost(_post),
+    //     _buildCommentsSection(),
+    //   ],
+    // );
+    return Stack(
       children: <Widget>[
-        _buildPost(_post),
-        _buildCommentsSection(),
+        ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            _buildPost(_post),
+            _buildCommentsSection(),
+          ],
+        ),
+        Container(
+          alignment: AlignmentDirectional.bottomEnd,
+          padding: EdgeInsets.all(20.0),
+          child: FloatingActionButton(
+            onPressed: () => showCommentBottomSheet(context),
+            backgroundColor: HexColor('1cb0f6'),
+            child: Icon(Icons.comment),
+          ),
+        ),
       ],
     );
   }
@@ -464,10 +633,6 @@ class ForumPostScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Container(
-          //   padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-          //   child: ForumNewPostWidget(),
-          // ),
         ],
       ),
     );
