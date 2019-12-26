@@ -16,7 +16,6 @@ class LearnScreen extends StatelessWidget {
             course.levelReached.toString(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontFamily: 'Varela',
               fontSize: 12,
               color: Colors.deepOrangeAccent,
             ),),
@@ -93,7 +92,6 @@ class LearnScreen extends StatelessWidget {
                   Text(
                     course.name,
                     style: TextStyle(
-                      fontFamily: 'Varela',
                       fontWeight: FontWeight.bold,
                       color: course.isUnlocked ? Colors.black54 : Colors.black26,
                       fontSize: 18.0,
@@ -115,6 +113,7 @@ class LearnScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
+            height: 57,
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             decoration: new BoxDecoration(
               color: Colors.white,
@@ -138,7 +137,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '8',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffffc800),
                           fontSize: 16
@@ -152,7 +150,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '1',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff9600),
                           fontSize: 16
@@ -166,7 +163,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '66',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff4b4b),
                           fontSize: 16

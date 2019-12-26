@@ -14,7 +14,7 @@ description: Bilinguo Mobile Version
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,6 +22,7 @@ dependencies:
   flutter_launcher_icons: ^0.7.2
   flutter_svg: ^0.15.0
   percent_indicator: ^2.1.1
+  uuid: 2.0.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -32,6 +33,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.7.2
   percent_indicator: ^2.1.1
+  uuid: 2.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -61,6 +63,7 @@ flutter:
     - assets/flags/
     - assets/icons/
     - assets/items/
+    - assets/mock-users/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -89,5 +92,16 @@ flutter:
     - family: Varela
       fonts:
         - asset: fonts/VarelaRound-Regular.ttf
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand-Regular.ttf
+        - asset: fonts/Quicksand-Light.ttf
+          weight: 300
+        - asset: fonts/Quicksand-Medium.ttf
+          weight: 500
+        - asset: fonts/Quicksand-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Quicksand-Bold.ttf
+          weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
