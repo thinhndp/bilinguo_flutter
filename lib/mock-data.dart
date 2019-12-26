@@ -6,6 +6,7 @@ import 'models/ItemGroup.dart';
 import 'models/User.dart';
 import 'models/Post.dart';
 import 'models/Topic.dart';
+import 'models/Comment.dart';
 
 Course coBan1 = new Course(
   '0',
@@ -306,13 +307,45 @@ List<Post> mockPosts = [
     title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',
     authorUid: 'user0',
     topicId: 'topic2',
-    content: '',
+    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
     upvoteCount: 1,
     downvoteCount: 1,
     postedTime: '2019-12-26T01:35:01+0700',
     upvoters: [ 'user1' ],
     downvoters: [ 'user2' ],
     commentCount: 3,
+    comments: [
+      Comment(
+        id: 'comment0',
+        authorUid: 'user1',
+        content: 'Lorem cmm chứ lorem',
+        upvoteCount: 1,
+        downvoteCount: 1,
+        postedTime: '2019-12-26T01:45:01+0700',
+        upvoters: [ 'user1' ],
+        downvoters: [ 'user2' ],
+      ),
+      Comment(
+        id: 'comment1',
+        authorUid: 'user2',
+        content: 'Nói hay lắm bạn tôi',
+        upvoteCount: 1,
+        downvoteCount: 0,
+        postedTime: '2019-12-26T01:38:01+0700',
+        upvoters: [ 'user1' ],
+        downvoters: [],
+      ),
+      Comment(
+        id: 'comment2',
+        authorUid: 'user2',
+        content: 'CHXHCNVNMN!',
+        upvoteCount: 0,
+        downvoteCount: 1,
+        postedTime: '2019-12-26T01:37:01+0700',
+        upvoters: [],
+        downvoters: [ 'user1' ],
+      ),
+    ]
   ),
   Post(
     id: 'post1',
@@ -326,6 +359,7 @@ List<Post> mockPosts = [
     upvoters: [ 'user0' ],
     downvoters: [ 'user1' ],
     commentCount: 15,
+    comments: [],
   ),
   Post(
     id: 'post2',
@@ -339,6 +373,7 @@ List<Post> mockPosts = [
     upvoters: [ 'user2' ],
     downvoters: [ 'user0' ],
     commentCount: 5,
+    comments: [],
   ),
 ];
 

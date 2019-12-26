@@ -6,6 +6,9 @@ import './models/Post.dart';
 import './utils/Helper.dart';
 
 class ForumWidget extends StatefulWidget {
+  const ForumWidget({ this.onPostTap });
+  final ForumPostCallback onPostTap;
+  
   @override
   _ForumWidgetState createState() => _ForumWidgetState();
 }
@@ -76,6 +79,10 @@ class _ForumWidgetState extends State<ForumWidget> {
     setState(() {
       _posts = mockPosts; //TODO: API GET
     });
+  }
+
+  _handlePostTap(post) {
+    widget.onPostTap(post);
   }
 
   Widget _buildTopicAll() {
@@ -215,149 +222,152 @@ class _ForumWidgetState extends State<ForumWidget> {
   Widget _buildPost(post) {
     // final _currentUserId = 'user1'; //
     final _postAuthor = _getUserByUid(post.authorUid);
-    return Container(
-      margin: EdgeInsets.only(top: 20.0),
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)]
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/' + _postAuthor.profilePicture),
-                    radius: 24.0,
-                  ),
-                  SizedBox(width: 10.0,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        _postAuthor.displayName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
+    return GestureDetector(
+      onTap: () => _handlePostTap(post),
+      child: Container(
+        margin: EdgeInsets.only(top: 20.0),
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)]
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/' + _postAuthor.profilePicture),
+                      radius: 24.0,
+                    ),
+                    SizedBox(width: 10.0,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          _postAuthor.displayName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
                         ),
-                      ),
-                      Text(
-                        Helper.getFormattedPostedTime(post.postedTime),
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff999999),
+                        Text(
+                          Helper.getFormattedPostedTime(post.postedTime),
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff999999),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.comment,
-                    color: Color(0xff777777),
-                  ),
-                  SizedBox(width: 3,),
-                  Text(
-                    post.commentCount.toString(),
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w500,
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.comment,
                       color: Color(0xff777777),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 10.0),
-          Text(
-            post.title,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20.0,
-              color: Color(0xff333333),
+                    SizedBox(width: 3,),
+                    Text(
+                      post.commentCount.toString(),
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff777777),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          Divider(
-            thickness: 2.0,
-            color: Color(0xffeeeeee),
-            height: 30.0,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  InkWell(
-                    onTap: () => _handleVoteClick(post, 'upvote'),
-                    child: Icon(
-                      Icons.thumb_up,
-                      color: _isPostUpvotedByCurrentUser(post) ? Color(0xff1CB0F6) : Color(0xff777777),
+            SizedBox(height: 10.0),
+            Text(
+              post.title,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 20.0,
+                color: Color(0xff333333),
+              ),
+            ),
+            Divider(
+              thickness: 2.0,
+              color: Color(0xffeeeeee),
+              height: 30.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () => _handleVoteClick(post, 'upvote'),
+                      child: Icon(
+                        Icons.thumb_up,
+                        color: _isPostUpvotedByCurrentUser(post) ? Color(0xff1CB0F6) : Color(0xff777777),
+                      ),
                     ),
-                  ),
-                  // Icon(
-                  //   Icons.thumb_up,
-                  //   color: isPostUpvotedByCurrentUser(_currentUserId, post) ? Color(0xff1CB0F6) : Color(0xff777777),
-                  // ),
-                  SizedBox(width: 3.0,),
-                  Text(
-                    post.upvoteCount.toString(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.0,
-                      color: _isPostUpvotedByCurrentUser(post) ? Color(0xff1CB0F6) : Color(0xff777777),
-                    ),
-                  ),
-                  SizedBox(width: 10.0,),
-                  InkWell(
-                    onTap: () => _handleVoteClick(post, 'downvote'),
-                    child: Icon(
-                      Icons.thumb_down,
-                      color: _isPostDownvotedByCurrentUser(post) ? Color(0xffF6621C) : Color(0xff777777),
-                    ),
-                  ),
-                  SizedBox(width: 3.0,),
-                  Text(
-                    post.downvoteCount.toString(),
-                    style: TextStyle(
+                    // Icon(
+                    //   Icons.thumb_up,
+                    //   color: isPostUpvotedByCurrentUser(_currentUserId, post) ? Color(0xff1CB0F6) : Color(0xff777777),
+                    // ),
+                    SizedBox(width: 3.0,),
+                    Text(
+                      post.upvoteCount.toString(),
+                      style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 16.0,
+                        color: _isPostUpvotedByCurrentUser(post) ? Color(0xff1CB0F6) : Color(0xff777777),
+                      ),
+                    ),
+                    SizedBox(width: 10.0,),
+                    InkWell(
+                      onTap: () => _handleVoteClick(post, 'downvote'),
+                      child: Icon(
+                        Icons.thumb_down,
                         color: _isPostDownvotedByCurrentUser(post) ? Color(0xffF6621C) : Color(0xff777777),
+                      ),
+                    ),
+                    SizedBox(width: 3.0,),
+                    Text(
+                      post.downvoteCount.toString(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.0,
+                          color: _isPostDownvotedByCurrentUser(post) ? Color(0xffF6621C) : Color(0xff777777),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    color: HexColor(_getTopicById(post.topicId).backgroundColor)
+                    // color: Color(0xff25C18A),
+                  ),
+                  child: Center(
+                    child: Text(
+                      (_getTopicById(post.topicId).name).toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0
+                      ),
                     ),
                   ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  color: HexColor(_getTopicById(post.topicId).backgroundColor)
-                  // color: Color(0xff25C18A),
                 ),
-                child: Center(
-                  child: Text(
-                    (_getTopicById(post.topicId).name).toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -394,8 +404,9 @@ class _ForumWidgetState extends State<ForumWidget> {
 }
 
 class ForumHomeScreen extends StatelessWidget {
-  const ForumHomeScreen({ this.onNewPostTap });
+  const ForumHomeScreen({ this.onNewPostTap, this.onPostTap });
   final VoidCallback onNewPostTap;
+  final ForumPostCallback onPostTap;
 
   Widget _buildHeader() {
     return Container(
@@ -446,7 +457,9 @@ class ForumHomeScreen extends StatelessWidget {
             child: Expanded(
               child: Stack(
                 children: <Widget>[
-                  ForumWidget(),
+                  ForumWidget(
+                    onPostTap: onPostTap
+                  ),
                   Container(
                     alignment: AlignmentDirectional.bottomEnd,
                     padding: EdgeInsets.all(20.0),
@@ -464,3 +477,5 @@ class ForumHomeScreen extends StatelessWidget {
       );
   }
 }
+
+typedef ForumPostCallback = void Function(Post post);

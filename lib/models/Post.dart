@@ -1,4 +1,6 @@
+
 import 'User.dart';
+import 'Comment.dart';
 
 class Post {
   String id;
@@ -8,14 +10,15 @@ class Post {
   String content;
   int upvoteCount;
   int downvoteCount;
-  String postedTime; //TODO: calculate time passed since created
+  String postedTime;
   List<String> upvoters;
   List<String> downvoters;
   int commentCount; //TODO: change to array
+  List<Comment> comments;
 
   Post({String id, String title, String authorUid, String topicId, String content,
       int upvoteCount, int downvoteCount, String postedTime, List<String>upvoters,
-      List<String> downvoters, int commentCount}) {
+      List<String> downvoters, int commentCount, List<Comment> comments}) {
     this.id = id;
     this.title = title;
     this.authorUid = authorUid;
@@ -27,5 +30,6 @@ class Post {
     this.upvoters = upvoters;
     this.downvoters = downvoters;
     this.commentCount = commentCount;
+    this.comments = comments;
   }
 }
