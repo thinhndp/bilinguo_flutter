@@ -393,4 +393,4 @@ List<Post> mockPosts = [
   ),
 ];
 
-User currentUser = User(uid: 'user1', displayName: 'Milos-san', profilePicture: 'mock-users/ricardo.jpg');
+User currentUser = User(uid: 'rayhTEOySpeJK1914j8Z0Oas9Yl1', displayName: 'Thinh Nguyen', profilePicture: 'mock-users/ricardo.jpg', email: '16521178@gm.uit.edu.vn');

@@ -3,7 +3,11 @@ import './utils/HexColor.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
 import './models/Post.dart';
+import './models/User.dart';
+import './models/Topic.dart';
+import './models/Comment.dart';
 import './utils/Helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ForumWidget extends StatefulWidget {
   const ForumWidget({ this.onPostTap });
@@ -16,20 +20,164 @@ class ForumWidget extends StatefulWidget {
 class _ForumWidgetState extends State<ForumWidget> {
   String _chosenTopicId = '';
   List<Post> _posts = [];
+  List<User> _users = [];
+  List<Topic> _topics = [];
 
   @override
   void initState() {
     super.initState();
     _chosenTopicId = '';
-    _posts = mockPosts; //TODO: API call
+    _posts = []; //TODO: API call
+    _users = [];
+    _topics = [];
+    // Firestore.instance.collection('posts').document()
+    //   .setData({ 
+    //     'title': 'Lorem ipsum dolor sit amet, cons adipiscing elit',
+    //     'authorUid': 'gOETO1m0tBWXXNYFHM5DbD6Wiyu1',
+    //     'authorEmail': 'thangnguyen@gmail.com',
+    //     'topicId': 'HVo6GRnYWg6jgwub5I51',
+    //     'content': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    //     'upvoteCount': 1,
+    //     'downvoteCount': 1,
+    //     'postedTime': '2019-12-26T01:35:01+0700',
+    //     'upvoters': [ '16521178@gm.uit.edu.vn' ],
+    //     'downvoters': [ 'thinhngu@gmail.com' ],
+    //     'commentCount': 0,
+    //    });
+    Firestore.instance
+      .collection('topics')
+      .snapshots()
+      .listen((data) => data.documents.forEach((doc) => {
+        // _topics.add(
+        //   Topic(
+        //     id: doc.documentID,
+        //     name: doc['name'],
+        //     backgroundColor: doc['backgroundColor'],
+        //   )
+        // )
+        setState(() {
+          _topics.add(
+            Topic(
+              id: doc.documentID,
+              name: doc['name'],
+              backgroundColor: doc['backgroundColor'],
+            ));
+        })
+        // _topics.forEach((f) => print(f.name))
+      }));
+
+    Firestore.instance
+      .collection('users')
+      .snapshots()
+      .listen((data) => data.documents.forEach((doc) => {
+        // _topics.add(
+        //   Topic(
+        //     id: doc.documentID,
+        //     name: doc['name'],
+        //     backgroundColor: doc['backgroundColor'],
+        //   )
+        // )
+        setState(() {
+          _users.add(
+            User(
+              uid: doc['uid'],
+              displayName: doc['displayName'],
+              profilePicture: 'mock-users/anon.jpg',
+              email: doc['email'],
+            ));
+        })
+        // _topics.forEach((f) => print(f.name))
+      }));
+
+    Firestore.instance
+      .collection('posts')
+      .snapshots()
+      .listen((data) => data.documents.forEach((doc) => {
+        // _topics.add(
+        //   Topic(
+        //     id: doc.documentID,
+        //     name: doc['name'],
+        //     backgroundColor: doc['backgroundColor'],
+        //   )
+        // )
+        setState(() {
+          _posts.add(
+            Post(
+              id: doc.documentID,
+              title: doc['title'],
+              authorUid: doc['authorUid'],
+              authorEmail: doc['authorEmail'],
+              topicId: doc['topicId'],
+              content: doc['content'],
+              upvoteCount: doc['upvoteCount'],
+              downvoteCount: doc['downvoteCount'],
+              postedTime: doc['postedTime'],
+              upvoters: new List<String>.from(doc['upvoters']),
+              downvoters: new List<String>.from(doc['downvoters']),
+              commentCount: 0,
+              comments: [],
+            )
+          );
+        }),
+        Firestore.instance
+          .collection('posts')
+          .document(doc.documentID)
+          .collection('comments')
+          .snapshots()
+          .listen((data) =>
+              data.documents.forEach((doc) => {
+                setState(() {
+                  _posts[_posts.length - 1].comments.add(
+                    Comment(
+                      id: doc.documentID,
+                      authorUid: doc['authorUid'],
+                      authorEmail: doc['authorEmail'],
+                      content: doc['content'],
+                      upvoteCount: doc['upvoteCount'],
+                      downvoteCount: doc['downvoteCount'],
+                      postedTime: doc['postedTime'],
+                      upvoters: new List<String>.from(doc['upvoters']),
+                      downvoters: new List<String>.from(doc['downvoters']),
+                    )
+                  );
+                  _posts[_posts.length - 1].commentCount += 1;
+                })
+              }))
+        // _topics.forEach((f) => print(f.name))
+      }));
+    // print('init');
   }
 
   _getUserByUid(uid) {
-    return mockUsers.firstWhere((user) => user.uid == uid);
+    // Firestore.instance
+    //     .collection('users')
+    //     .document('document-name')
+    //     .get()
+    //     .then((DocumentSnapshot ds) {
+    //   // use ds as a snapshot
+    // });
+    return _users.firstWhere((user) => user.uid == uid,
+      orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'));
+  }
+
+  _getUserByEmail(email) {
+    // Firestore.instance
+    //     .collection('users')
+    //     .document(email)
+    //     .get()
+    //     .then((DocumentSnapshot ds) {
+    //   // use ds as a snapshot
+    // });
+    return _users.firstWhere((user) => user.email == email,
+      orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg', email: 'null'));
   }
 
   _getTopicById(topicId) {
-    return mockTopics.firstWhere((topic) => topic.id == topicId);
+    // if (!(_topics.length > 0)) {
+    //   return Topic(id: 'null', name: '?', backgroundColor: '#ffffff');
+    // }
+    return _topics.firstWhere((topic) => topic.id == topicId, 
+      orElse: () => Topic(id: 'null', name: '?', backgroundColor: '#ffffff'));
   }
   _getFilteredPosts() {
     var filteredPosts;
@@ -57,28 +205,71 @@ class _ForumWidgetState extends State<ForumWidget> {
     var postIndex = _posts.indexWhere((_post) => _post.id == post.id);
     if (voteType == 'upvote') {
       if (_isPostUpvotedByCurrentUser(post)) {
-        posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
+        // posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
+        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
       }
       else {
-        posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
-        posts[postIndex].upvoters.add(currentUser.uid);
+        // posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
+        // posts[postIndex].upvoters.add(currentUser.uid);
+        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
+        posts[postIndex].upvoters.add(currentUser.email);
       }
     }
     else if (voteType == 'downvote') {
       if (_isPostDownvotedByCurrentUser(post)) {
-        posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
+        // posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
+        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
       }
       else {
-        posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
-        posts[postIndex].downvoters.add(currentUser.uid);
+        // posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
+        // posts[postIndex].downvoters.add(currentUser.uid);
+        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
+        posts[postIndex].downvoters.add(currentUser.email);
       }
     }
     posts[postIndex].upvoteCount = posts[postIndex].upvoters.length;
     posts[postIndex].downvoteCount = posts[postIndex].downvoters.length;
-    mockPosts = [ ...posts ]; //TODO: API POST
-    setState(() {
-      _posts = mockPosts; //TODO: API GET
-    });
+    // mockPosts = [ ...posts ]; //TODO: API POST
+    // setState(() {
+    //   _posts = mockPosts; //TODO: API GET
+    // });
+    _posts = [];
+    Firestore.instance.collection('posts').document(post.id)
+      .setData({
+        'id': posts[postIndex].id,
+        'title': posts[postIndex].title,
+        'authorUid': posts[postIndex].authorUid,
+        'authorEmail': posts[postIndex].authorEmail,
+        'topicId': posts[postIndex].topicId,
+        'content': posts[postIndex].content,
+        'upvoteCount': posts[postIndex].upvoteCount,
+        'downvoteCount': posts[postIndex].downvoteCount,
+        'postedTime': posts[postIndex].postedTime,
+        'upvoters': posts[postIndex].upvoters,
+        'downvoters': posts[postIndex].downvoters,
+        'commentCount': posts[postIndex].commentCount,
+        // TODO:
+      }).then((value) => {
+        // Firestore.instance
+        //   .collection('posts')
+        //   .document(post.id)
+        //   .get()
+        //   .then((DocumentSnapshot ds) {
+        //   // use ds as a snapshot
+        //     setState(() {
+        //       _posts[postIndex].upvoteCount = ds.data['upvoteCount'];
+        //       _posts[postIndex].downvoteCount = ds.data['downvoteCount'];
+        //       _posts[postIndex].upvoters = ds.data['upvoters'];
+        //       _posts[postIndex].downvoters = ds.data['downvoters'];
+        //     });
+        //   })
+        // setState(() {
+        //   _posts[postIndex].upvoteCount = posts[postIndex].upvoteCount;
+        //   _posts[postIndex].downvoteCount = posts[postIndex].downvoteCount;
+        //   _posts[postIndex].upvoters = posts[postIndex].upvoters;
+        //   _posts[postIndex].downvoters = posts[postIndex].downvoters;
+        // })
+      });
   }
 
   _handlePostTap(post) {
@@ -205,7 +396,7 @@ class _ForumWidgetState extends State<ForumWidget> {
             margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
             // height: 83.0,
             height: 93.75,
-            child: _buildTopicList(mockTopics),
+            child: _buildTopicList(_topics),
           ),
         ],
       ),
@@ -213,15 +404,18 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   _isPostUpvotedByCurrentUser(post) {
-    return post.upvoters.contains(currentUser.uid);
+    // return post.upvoters.contains(currentUser.uid);
+    return post.upvoters.contains(currentUser.email);
   }
   _isPostDownvotedByCurrentUser(post) {
-    return post.downvoters.contains(currentUser.uid);
+    // return post.downvoters.contains(currentUser.uid);
+    return post.downvoters.contains(currentUser.email);
   }
 
   Widget _buildPost(post) {
     // final _currentUserId = 'user1'; //
-    final _postAuthor = _getUserByUid(post.authorUid);
+    final _postAuthor = _getUserByEmail(post.authorEmail);
+    // print(_postAuthor.email);
     return GestureDetector(
       onTap: () => _handlePostTap(post),
       child: Container(

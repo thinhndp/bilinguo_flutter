@@ -7,6 +7,7 @@ import './models/Comment.dart';
 import './mock-data.dart';
 import './utils/Helper.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ForumPostWidget extends StatefulWidget {
   const ForumPostWidget({ this.post });
@@ -19,7 +20,8 @@ class ForumPostWidget extends StatefulWidget {
 class _ForumPostWidgetState extends State<ForumPostWidget> {
   Post _post;
   List<User> _users = [];
-  List<Topic> _topics = [];
+  // List<Topic> _topics = [];
+  Topic _topic = Topic(id: 'null', name: '?', backgroundColor: '#ffffff');
   List<Post> _posts = [];
   // String _newComment = '';
   final commentController = TextEditingController();
@@ -27,9 +29,104 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   @override
   void initState() {
     super.initState();
-    _post = widget.post;
-    _users = mockUsers; // TODO: API GET
-    _topics = mockTopics; // TODO: API GET
+    // _post = widget.post;
+    Firestore.instance
+      .collection('posts')
+      .document(widget.post.id)
+      .get()
+      .then((DocumentSnapshot ds) {
+        // use ds as a snapshot
+        setState(() {
+          _topic = Topic(
+            id: ds.documentID,
+            name: ds.data['name'],
+            backgroundColor: ds.data['backgroundColor'],
+          );
+        });
+        setState(() {
+          _post = Post(
+            id: ds.documentID,
+            title: ds.data['title'],
+            authorUid: ds.data['authorUid'],
+            authorEmail: ds.data['authorEmail'],
+            topicId: ds.data['topicId'],
+            content: ds.data['content'],
+            upvoteCount: ds.data['upvoteCount'],
+            downvoteCount: ds.data['downvoteCount'],
+            postedTime: ds.data['postedTime'],
+            upvoters: new List<String>.from(ds.data['upvoters']),
+            downvoters: new List<String>.from(ds.data['downvoters']),
+            commentCount: 0,
+            comments: [],
+          );
+        });
+        Firestore.instance
+          .collection('posts')
+          .document(ds.documentID)
+          .collection('comments')
+          .snapshots()
+          .listen((data) =>
+              data.documents.forEach((doc) => {
+                setState(() {
+                  _post.comments.add(
+                    Comment(
+                      id: doc.documentID,
+                      authorUid: doc['authorUid'],
+                      authorEmail: doc['authorEmail'],
+                      content: doc['content'],
+                      upvoteCount: doc['upvoteCount'],
+                      downvoteCount: doc['downvoteCount'],
+                      postedTime: doc['postedTime'],
+                      upvoters: new List<String>.from(doc['upvoters']),
+                      downvoters: new List<String>.from(doc['downvoters']),
+                    )
+                  );
+                  _post.commentCount += 1;
+                })
+              }));
+      });
+
+    // _users = mockUsers; // TODO: API GET
+    _users = [];
+    Firestore.instance
+      .collection('users')
+      .snapshots()
+      .listen((data) => data.documents.forEach((doc) => {
+        // _topics.add(
+        //   Topic(
+        //     id: doc.documentID,
+        //     name: doc['name'],
+        //     backgroundColor: doc['backgroundColor'],
+        //   )
+        // )
+        setState(() {
+          _users.add(
+            User(
+              uid: doc['uid'],
+              displayName: doc['displayName'],
+              profilePicture: 'mock-users/anon.jpg',
+              email: doc['email'],
+            ));
+        })
+        // _topics.forEach((f) => print(f.name))
+      }));
+
+    
+    // _topics = mockTopics; // TODO: API GET
+    Firestore.instance
+      .collection('topics')
+      .document(widget.post.topicId)
+      .get()
+      .then((DocumentSnapshot ds) {
+        // use ds as a snapshot
+        setState(() {
+          _topic = Topic(
+            id: ds.documentID,
+            name: ds.data['name'],
+            backgroundColor: ds.data['backgroundColor'],
+          );
+        });
+      });
     _posts = mockPosts; // TODO: API GET
   }
 
@@ -40,13 +137,18 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   }
 
 
-  _getUserByUid(uid) {
-    return _users.firstWhere((user) => user.uid == uid);
+  // _getUserByUid(uid) {
+  //   return _users.firstWhere((user) => user.uid == uid);
+  // }
+
+  _getUserByEmail(email) {
+    return _users.firstWhere((user) => user.email == email,
+      orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'));
   }
 
-  _getTopicById(topicId) {
-    return _topics.firstWhere((topic) => topic.id == topicId);
-  }
+  // _getTopicById(topicId) {
+  //   return _topics.firstWhere((topic) => topic.id == topicId);
+  // }
 
   _getSortedCommentList(comments) {
     //sort by comment time
@@ -257,7 +359,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
 
   Widget _buildComment(comment) {
     // final _currentUserId = 'user1'; //
-    final _postAuthor = _getUserByUid(comment.authorUid);
+    final _postAuthor = _getUserByEmail(comment.authorEmail);
     return Container(
         margin: EdgeInsets.only(top: 14.0),
         padding: EdgeInsets.all(16.0),
@@ -394,7 +496,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
 
   Widget _buildPost(post) {
     // final _currentUserId = 'user1'; //
-    final _postAuthor = _getUserByUid(post.authorUid);
+    final _postAuthor = _getUserByEmail(post.authorEmail);
     return Container(
         // margin: EdgeInsets.only(top: 20.0),
         padding: EdgeInsets.all(16.0),
@@ -520,12 +622,12 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    color: HexColor(_getTopicById(post.topicId).backgroundColor)
+                    color: HexColor(_topic.backgroundColor)
                     // color: Color(0xff25C18A),
                   ),
                   child: Center(
                     child: Text(
-                      (_getTopicById(post.topicId).name).toUpperCase(),
+                      (_topic.name).toUpperCase(),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
