@@ -9,9 +9,10 @@ import 'shop.dart';
 import 'forum.dart';
 
 class HomeScreen extends StatefulWidget {
+  final GlobalKey<NavigatorState> _navigatorKey;
   final ViewModel _viewModel;
 
-  HomeScreen(this._viewModel);
+  HomeScreen(this._navigatorKey, this._viewModel);
 
   @override
   State<StatefulWidget> createState() {
@@ -24,11 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _currentIndex = 0;
   final List<Widget> _children = [
-    LearnScreen(),
-    AchievementScreen(),
-    ForumScreen(),
-    ShopScreen(),
-    PlaceholderWidget(Colors.deepOrange),
+    // LearnScreen(widget._navigatorKey),
+    // AchievementScreen(),
+    // ForumScreen(),
+    // ShopScreen(),
+    // PlaceholderWidget(Colors.deepOrange),
   ];
 
   void onTabTapped(int index) {
@@ -37,23 +38,31 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // @override void initState() {
-  //   super.initState();
+  @override void initState() {
+    super.initState();
 
-  //   // _auth.currentUser()
-  //   //   .then((currentUser) {
-  //   //     widget._viewModel.onSetCurrentUser(currentUser);
-  //   //     currentUser.getIdToken().then((onValue) {
-  //   //       print(onValue.token);
-  //   //     });
-  //   //   })
-  //   //   .catchError((err) {
-  //   //     print(err);
-  //   //   });
-  // }
+    // Temp. TODO: Fix
+    _children.add(LearnScreen(widget._navigatorKey));
+    _children.add(AchievementScreen());
+    _children.add(ForumScreen());
+    _children.add(ShopScreen());
+    _children.add(PlaceholderWidget(Colors.deepOrange));
+
+    // _auth.currentUser()
+    //   .then((currentUser) {
+    //     widget._viewModel.onSetCurrentUser(currentUser);
+    //     currentUser.getIdToken().then((onValue) {
+    //       print(onValue.token);
+    //     });
+    //   })
+    //   .catchError((err) {
+    //     print(err);
+    //   });
+  }
 
   @override
   Widget build(BuildContext context) {
+    widget._navigatorKey;
     // TODO: implement build
     return MaterialApp(
       title: 'Bilinguo',
