@@ -203,7 +203,8 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   Widget _buildTopicList(topics) {
-    return _topics != null ? ListView(
+    return (_topics != null)
+      ? ListView(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         children: [

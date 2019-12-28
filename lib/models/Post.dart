@@ -102,10 +102,21 @@ class Post {
   static Future votePost(userEmail, postId, type) async {
     try {
       const url = "https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/votePost";
-      await http.post(url, body: {'userEmail': userEmail, 'postId': postId, 'type': type});
+      await http.post(url, body: { 'userEmail': userEmail, 'postId': postId, 'type': type });
     }
     catch (err) {
       print('oof vote post ' + err.toString());
+    }
+  }
+
+  static Future postNewPost(authorEmail, topicId, title, content) async {
+    // print(authorEmail);
+    try {
+      const url = "https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/postNewPost";
+      await http.post(url, body: { 'authorEmail': authorEmail, 'topicId': topicId, 'title': title, 'content': content });
+    }
+    catch (err) {
+      print('oof post new post ' + err.toString());
     }
   }
 }
