@@ -3,11 +3,8 @@ import './utils/HexColor.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
 import './models/Post.dart';
-import './models/User.dart';
 import './models/Topic.dart';
-import './models/Comment.dart';
 import './utils/Helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ForumWidget extends StatefulWidget {
   const ForumWidget({ this.onPostTap });
@@ -19,173 +16,42 @@ class ForumWidget extends StatefulWidget {
 
 class _ForumWidgetState extends State<ForumWidget> {
   String _chosenTopicId = '';
-  List<Post> _posts = [];
-  List<User> _users = [];
-  List<Topic> _topics = [];
+  List<Post> _posts;
+  List<Topic> _topics;
+  List<bool> _isUpdatingVote;
 
   @override
   void initState() {
     super.initState();
     _chosenTopicId = '';
-    _posts = []; //TODO: API call
-    _users = [];
-    _topics = [];
-    // Firestore.instance.collection('posts').document()
-    //   .setData({ 
-    //     'title': 'Lorem ipsum dolor sit amet, cons adipiscing elit',
-    //     'authorUid': 'gOETO1m0tBWXXNYFHM5DbD6Wiyu1',
-    //     'authorEmail': 'thangnguyen@gmail.com',
-    //     'topicId': 'HVo6GRnYWg6jgwub5I51',
-    //     'content': "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    //     'upvoteCount': 1,
-    //     'downvoteCount': 1,
-    //     'postedTime': '2019-12-26T01:35:01+0700',
-    //     'upvoters': [ '16521178@gm.uit.edu.vn' ],
-    //     'downvoters': [ 'thinhngu@gmail.com' ],
-    //     'commentCount': 0,
-    //    });
-    Firestore.instance
-      .collection('topics')
-      .snapshots()
-      .listen((data) => data.documents.forEach((doc) => {
-        // _topics.add(
-        //   Topic(
-        //     id: doc.documentID,
-        //     name: doc['name'],
-        //     backgroundColor: doc['backgroundColor'],
-        //   )
-        // )
-        setState(() {
-          _topics.add(
-            Topic(
-              id: doc.documentID,
-              name: doc['name'],
-              backgroundColor: doc['backgroundColor'],
-            ));
-        })
-        // _topics.forEach((f) => print(f.name))
-      }));
 
-    Firestore.instance
-      .collection('users')
-      .snapshots()
-      .listen((data) => data.documents.forEach((doc) => {
-        // _topics.add(
-        //   Topic(
-        //     id: doc.documentID,
-        //     name: doc['name'],
-        //     backgroundColor: doc['backgroundColor'],
-        //   )
-        // )
-        setState(() {
-          _users.add(
-            User(
-              uid: doc['uid'],
-              displayName: doc['displayName'],
-              profilePicture: 'mock-users/anon.jpg',
-              email: doc['email'],
-            ));
-        })
-        // _topics.forEach((f) => print(f.name))
-      }));
+    Topic.fetchTopics().then((topics) {
+      setState(() {
+        _topics = topics;
+      });
+    })
+    .catchError((err) {
+      print(err);
+    });
 
-    Firestore.instance
-      .collection('posts')
-      .snapshots()
-      .listen((data) => data.documents.forEach((doc) => {
-        // _topics.add(
-        //   Topic(
-        //     id: doc.documentID,
-        //     name: doc['name'],
-        //     backgroundColor: doc['backgroundColor'],
-        //   )
-        // )
-        setState(() {
-          _posts.add(
-            Post(
-              id: doc.documentID,
-              title: doc['title'],
-              authorUid: doc['authorUid'],
-              authorEmail: doc['authorEmail'],
-              topicId: doc['topicId'],
-              content: doc['content'],
-              upvoteCount: doc['upvoteCount'],
-              downvoteCount: doc['downvoteCount'],
-              postedTime: doc['postedTime'],
-              upvoters: new List<String>.from(doc['upvoters']),
-              downvoters: new List<String>.from(doc['downvoters']),
-              commentCount: 0,
-              comments: [],
-            )
-          );
-        }),
-        Firestore.instance
-          .collection('posts')
-          .document(doc.documentID)
-          .collection('comments')
-          .snapshots()
-          .listen((data) =>
-              data.documents.forEach((doc) => {
-                setState(() {
-                  _posts[_posts.length - 1].comments.add(
-                    Comment(
-                      id: doc.documentID,
-                      authorUid: doc['authorUid'],
-                      authorEmail: doc['authorEmail'],
-                      content: doc['content'],
-                      upvoteCount: doc['upvoteCount'],
-                      downvoteCount: doc['downvoteCount'],
-                      postedTime: doc['postedTime'],
-                      upvoters: new List<String>.from(doc['upvoters']),
-                      downvoters: new List<String>.from(doc['downvoters']),
-                    )
-                  );
-                  _posts[_posts.length - 1].commentCount += 1;
-                })
-              }))
-        // _topics.forEach((f) => print(f.name))
-      }));
-    // print('init');
+    Post.fetchPosts().then((posts) {
+      setState(() {
+        _posts = posts;
+        _isUpdatingVote = List<bool>.generate(_posts.length, (i) => false);
+      });
+    })
+    .catchError((err) {
+      print(err);
+    });
   }
-
-  _getUserByUid(uid) {
-    // Firestore.instance
-    //     .collection('users')
-    //     .document('document-name')
-    //     .get()
-    //     .then((DocumentSnapshot ds) {
-    //   // use ds as a snapshot
-    // });
-    return _users.firstWhere((user) => user.uid == uid,
-      orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'));
-  }
-
-  _getUserByEmail(email) {
-    // Firestore.instance
-    //     .collection('users')
-    //     .document(email)
-    //     .get()
-    //     .then((DocumentSnapshot ds) {
-    //   // use ds as a snapshot
-    // });
-    return _users.firstWhere((user) => user.email == email,
-      orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg', email: 'null'));
-  }
-
-  _getTopicById(topicId) {
-    // if (!(_topics.length > 0)) {
-    //   return Topic(id: 'null', name: '?', backgroundColor: '#ffffff');
-    // }
-    return _topics.firstWhere((topic) => topic.id == topicId, 
-      orElse: () => Topic(id: 'null', name: '?', backgroundColor: '#ffffff'));
-  }
+  
   _getFilteredPosts() {
     var filteredPosts;
     if (_chosenTopicId == '') {
       filteredPosts = _posts;
     }
     else {
-      filteredPosts = (_posts.where((post) => post.topicId == _chosenTopicId)).toList();
+      filteredPosts = (_posts.where((post) => post.topic.id == _chosenTopicId)).toList();
     }
     filteredPosts.sort((Post post1, Post post2) => post2.postedTime.compareTo(post1.postedTime));
     return filteredPosts;
@@ -199,81 +65,63 @@ class _ForumWidgetState extends State<ForumWidget> {
     });
   }
 
-  _handleVoteClick(post, voteType) {
-    // print(voteType);
+  _handleVoteClick(post, type) {
+    Scaffold.of(context).hideCurrentSnackBar();
+    var postIndex = _posts.indexWhere((p) => p.id == post.id);
+    if (_isUpdatingVote[postIndex] == true) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Vote từ từ thôi bạn'),
+        backgroundColor: Color(0xffff4444),
+      ));
+      return;
+    }
+    _isUpdatingVote[postIndex] = true;
+    
     var posts = _posts;
-    var postIndex = _posts.indexWhere((_post) => _post.id == post.id);
-    if (voteType == 'upvote') {
+    if (type == 'upvote') {
       if (_isPostUpvotedByCurrentUser(post)) {
-        // posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
         posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
       }
       else {
-        // posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
-        // posts[postIndex].upvoters.add(currentUser.uid);
         posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
         posts[postIndex].upvoters.add(currentUser.email);
       }
     }
-    else if (voteType == 'downvote') {
+    else if (type == 'downvote') {
       if (_isPostDownvotedByCurrentUser(post)) {
-        // posts[postIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
         posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
       }
       else {
-        // posts[postIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
-        // posts[postIndex].downvoters.add(currentUser.uid);
         posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
         posts[postIndex].downvoters.add(currentUser.email);
       }
     }
     posts[postIndex].upvoteCount = posts[postIndex].upvoters.length;
     posts[postIndex].downvoteCount = posts[postIndex].downvoters.length;
-    // mockPosts = [ ...posts ]; //TODO: API POST
-    // setState(() {
-    //   _posts = mockPosts; //TODO: API GET
-    // });
-    _posts = [];
-    Firestore.instance.collection('posts').document(post.id)
-      .setData({
-        'id': posts[postIndex].id,
-        'title': posts[postIndex].title,
-        'authorUid': posts[postIndex].authorUid,
-        'authorEmail': posts[postIndex].authorEmail,
-        'topicId': posts[postIndex].topicId,
-        'content': posts[postIndex].content,
-        'upvoteCount': posts[postIndex].upvoteCount,
-        'downvoteCount': posts[postIndex].downvoteCount,
-        'postedTime': posts[postIndex].postedTime,
-        'upvoters': posts[postIndex].upvoters,
-        'downvoters': posts[postIndex].downvoters,
-        'commentCount': posts[postIndex].commentCount,
-        // TODO:
-      }).then((value) => {
-        // Firestore.instance
-        //   .collection('posts')
-        //   .document(post.id)
-        //   .get()
-        //   .then((DocumentSnapshot ds) {
-        //   // use ds as a snapshot
-        //     setState(() {
-        //       _posts[postIndex].upvoteCount = ds.data['upvoteCount'];
-        //       _posts[postIndex].downvoteCount = ds.data['downvoteCount'];
-        //       _posts[postIndex].upvoters = ds.data['upvoters'];
-        //       _posts[postIndex].downvoters = ds.data['downvoters'];
-        //     });
-        //   })
-        // setState(() {
-        //   _posts[postIndex].upvoteCount = posts[postIndex].upvoteCount;
-        //   _posts[postIndex].downvoteCount = posts[postIndex].downvoteCount;
-        //   _posts[postIndex].upvoters = posts[postIndex].upvoters;
-        //   _posts[postIndex].downvoters = posts[postIndex].downvoters;
-        // })
+    setState(() {
+      _posts[postIndex] = posts[postIndex];
+    });
+    print(postIndex);
+
+    Post.votePost(currentUser.email, post.id, type)
+    .then((res) {
+      Post.getPostWithoutComments(post.id)
+      .then((post) {
+        var index = _posts.indexWhere((p) => p.id == post.id);
+        print(index);
+        _isUpdatingVote[postIndex] = false;
+        setState(() {
+          _posts[index] = post;
+        });
       });
+    })
+    .catchError((err) {
+      print(err);
+    });
   }
 
   _handlePostTap(post) {
-    widget.onPostTap(post);
+    // widget.onPostTap(post);
   }
 
   Widget _buildTopicAll() {
@@ -295,15 +143,6 @@ class _ForumWidgetState extends State<ForumWidget> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               color: HexColor(_defaultColor).withOpacity(_chosenTopicId == '' ? 1 : 0.5),
-              // gradient: LinearGradient(
-              //   begin: Alignment.topCenter,
-              //   end: Alignment.bottomCenter,
-              //   stops: [0, 1],
-              //   colors: [
-              //     HexColor(topic.backgroundColorGradientTop),
-              //     HexColor(topic.backgroundColorGradientBottom),
-              //   ],
-              // ),
             ),
             child: InkWell(
               onTap: () => _handleTopicClick(''),
@@ -342,15 +181,6 @@ class _ForumWidgetState extends State<ForumWidget> {
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
             color: HexColor(topic.backgroundColor).withOpacity(_chosenTopicId == topic.id ? 1 : 0.5),
             
-            // gradient: LinearGradient(
-            //   begin: Alignment.topCenter,
-            //   end: Alignment.bottomCenter,
-            //   stops: [0, 1],
-            //   colors: [
-            //     HexColor(topic.backgroundColorGradientTop),
-            //     HexColor(topic.backgroundColorGradientBottom),
-            //   ],
-            // ),
           ),
           child: InkWell(
             // splashColor: Colors.white,
@@ -373,7 +203,7 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   Widget _buildTopicList(topics) {
-    return ListView(
+    return _topics != null ? ListView(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         children: [
@@ -381,6 +211,12 @@ class _ForumWidgetState extends State<ForumWidget> {
           ...topics.map<Widget>((topic) => (
             _buildTopic(topic)
           )).toList()
+        ],
+      )
+      : Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CircularProgressIndicator()
         ],
       );
   }
@@ -404,18 +240,14 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   _isPostUpvotedByCurrentUser(post) {
-    // return post.upvoters.contains(currentUser.uid);
     return post.upvoters.contains(currentUser.email);
   }
   _isPostDownvotedByCurrentUser(post) {
-    // return post.downvoters.contains(currentUser.uid);
     return post.downvoters.contains(currentUser.email);
   }
 
   Widget _buildPost(post) {
-    // final _currentUserId = 'user1'; //
-    final _postAuthor = _getUserByEmail(post.authorEmail);
-    // print(_postAuthor.email);
+    final _postAuthor = post.author;
     return GestureDetector(
       onTap: () => _handlePostTap(post),
       child: Container(
@@ -437,7 +269,7 @@ class _ForumWidgetState extends State<ForumWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundImage: AssetImage('assets/' + _postAuthor.profilePicture),
+                      backgroundImage: NetworkImage(_postAuthor.profilePicture),
                       radius: 24.0,
                     ),
                     SizedBox(width: 10.0,),
@@ -544,12 +376,14 @@ class _ForumWidgetState extends State<ForumWidget> {
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    color: HexColor(_getTopicById(post.topicId).backgroundColor)
+                    // color: HexColor(_getTopicById(post.topicId).backgroundColor)
+                    color: HexColor(post.topic.backgroundColor)
                     // color: Color(0xff25C18A),
                   ),
                   child: Center(
                     child: Text(
-                      (_getTopicById(post.topicId).name).toUpperCase(),
+                      // (_getTopicById(post.topicId).name).toUpperCase(),
+                      (post.topic.name).toUpperCase(),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -567,34 +401,50 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   Widget _buildPopularPosts() {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('Bài đăng phổ biến', style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold )),
-          ..._getFilteredPosts().map<Widget>((post) => (_buildPost(post))).toList(),
-        ],
-      ),
-    );
+    return (_posts != null) 
+      ? Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Bài đăng phổ biến', style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold )),
+            ..._getFilteredPosts().map<Widget>((post) => (_buildPost(post))).toList(),
+          ],
+        ),
+      )
+      : Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Bài đăng phổ biến', style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold )),
+            SizedBox(height: 40.0,),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+              ],
+            ),
+          ],
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-                    padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      // Hero(
-                      //   tag: 'topic-list',
-                      //   child: _buildPopularTopics(),
-                      // ),
-                      _buildPopularTopics(),
-                      SizedBox(height: 20.0,),
-                      _buildPopularPosts(),
-                    ],
-                  );
+      padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
+      shrinkWrap: true,
+      children: <Widget>[
+        // Hero(
+        //   tag: 'topic-list',
+        //   child: _buildPopularTopics(),
+        // ),
+        _buildPopularTopics(),
+        SizedBox(height: 20.0,),
+        _buildPopularPosts(),
+      ],
+    );
   }
-
 }
 
 class ForumHomeScreen extends StatelessWidget {

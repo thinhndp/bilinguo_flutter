@@ -54,26 +54,26 @@ class _ForumNewPostWidgetState extends State<ForumNewPostWidget> {
     }
     else {
       var uuid = Uuid();
-      Post newPost = new Post(
-        id: uuid.v4(),
-        title: postTitleController.text.trim(),
-        authorUid: currentUser.uid,
-        topicId: _chosenTopicId,
-        content: postContentController.text.trim(),
-        upvoteCount: 0,
-        downvoteCount: 0,
-        postedTime: DateTime.now().toIso8601String(),
-        upvoters: [],
-        downvoters: [],
-        commentCount: 0,
-      );
-      mockPosts.add(newPost);
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Đăng bài thành công!'),
-        backgroundColor: Color(0xff00C851),
-      ));
-      print(newPost.title);
-      widget.onPosted();
+      // Post newPost = new Post(
+      //   id: uuid.v4(),
+      //   title: postTitleController.text.trim(),
+      //   authorUid: currentUser.uid,
+      //   topicId: _chosenTopicId,
+      //   content: postContentController.text.trim(),
+      //   upvoteCount: 0,
+      //   downvoteCount: 0,
+      //   postedTime: DateTime.now().toIso8601String(),
+      //   upvoters: [],
+      //   downvoters: [],
+      //   commentCount: 0,
+      // );
+      // mockPosts.add(newPost);
+      // Scaffold.of(context).showSnackBar(SnackBar(
+      //   content: Text('Đăng bài thành công!'),
+      //   backgroundColor: Color(0xff00C851),
+      // ));
+      // print(newPost.title);
+      // widget.onPosted();
     }
   }
 

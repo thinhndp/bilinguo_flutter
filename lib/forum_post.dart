@@ -47,9 +47,9 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
           _post = Post(
             id: ds.documentID,
             title: ds.data['title'],
-            authorUid: ds.data['authorUid'],
-            authorEmail: ds.data['authorEmail'],
-            topicId: ds.data['topicId'],
+            // authorUid: ds.data['authorUid'],
+            // authorEmail: ds.data['authorEmail'],
+            // topicId: ds.data['topicId'],
             content: ds.data['content'],
             upvoteCount: ds.data['upvoteCount'],
             downvoteCount: ds.data['downvoteCount'],
@@ -115,7 +115,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     // _topics = mockTopics; // TODO: API GET
     Firestore.instance
       .collection('topics')
-      .document(widget.post.topicId)
+      .document(widget.post.topic.id)
       .get()
       .then((DocumentSnapshot ds) {
         // use ds as a snapshot
@@ -127,7 +127,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
           );
         });
       });
-    _posts = mockPosts; // TODO: API GET
+    _posts = []; // TODO: API GET
   }
 
   @override
@@ -190,11 +190,11 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     var postIndex = _posts.indexWhere((post) => post.id == _post.id);
     var post = _post;
     post.comments.add(newComment);
-    mockPosts[postIndex] = post; //TODO: API POST
-    setState(() {
-      _posts = mockPosts; //TODO: API GET
-      _post = _posts[postIndex];
-    });
+    // mockPosts[postIndex] = post; //TODO: API POST
+    // setState(() {
+    //   _posts = mockPosts; //TODO: API GET
+    //   _post = _posts[postIndex];
+    // });
     // Scaffold.of(context).showSnackBar(SnackBar(
     //   content: Text('Đăng bình luận thành công!'),
     //   backgroundColor: Color(0xff00C851),
@@ -318,10 +318,10 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     }
     posts[postIndex].upvoteCount = posts[postIndex].upvoters.length;
     posts[postIndex].downvoteCount = posts[postIndex].downvoters.length;
-    mockPosts = [ ...posts ]; //TODO: API POST
-    setState(() {
-      _posts = mockPosts; //TODO: API GET
-    });
+    // mockPosts = [ ...posts ]; //TODO: API POST
+    // setState(() {
+    //   _posts = mockPosts; //TODO: API GET
+    // });
   }
 
   _handleCommentVoteClick(comment, voteType) {
@@ -350,11 +350,11 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     comments[commentIndex].upvoteCount = comments[commentIndex].upvoters.length;
     comments[commentIndex].downvoteCount = comments[commentIndex].downvoters.length;
     _post.comments = [ ...comments ];
-    mockPosts[postIndex] = _post; //TODO: API POST
-    setState(() {
-      _posts = mockPosts; //TODO: API GET
-      _post = _posts[postIndex];
-    });
+    // mockPosts[postIndex] = _post; //TODO: API POST
+    // setState(() {
+    //   _posts = mockPosts; //TODO: API GET
+    //   _post = _posts[postIndex];
+    // });
   }
 
   Widget _buildComment(comment) {
