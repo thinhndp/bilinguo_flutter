@@ -121,7 +121,7 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   _handlePostTap(post) {
-    // widget.onPostTap(post);
+    widget.onPostTap(post);
   }
 
   Widget _buildTopicAll() {
