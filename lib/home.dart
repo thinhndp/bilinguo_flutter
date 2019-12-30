@@ -1,3 +1,4 @@
+import 'package:bilinguo_flutter/profile.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AchievementScreen(),
     ForumScreen(),
     ShopScreen(),
-    PlaceholderWidget(Colors.deepOrange),
+    ProfileScreen(),
   ];
 
   void onTabTapped(int index) {
