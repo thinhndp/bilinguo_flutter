@@ -217,79 +217,6 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     return widgetList;
   }
 
-  Widget _renderCheckButton() {
-    if (_answerStatus == 'unchecked') {
-      return RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)
-        ),
-        elevation: 4,
-        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-        onPressed: () {
-          _checkAnswer();
-        },
-        color: Colors.green,
-        textColor: Colors.white,
-        child: Text(
-            'KIỂM TRA',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-        ),
-      );
-    }
-    if (_answerStatus == 'correct') {
-      return RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)
-        ),
-        elevation: 4,
-        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-        onPressed: () {
-          if (_isDone == false) {
-            // Start next question
-            _initQuestion();
-          } else if (_isDone == true) {
-            // End exercise
-            _showSummary();
-            // widget._navigatorKey.currentState.pushNamed('/home');
-          }
-        },
-        color: Colors.green[400],
-        textColor: Colors.white,
-        child: Text(
-            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-        ),
-      );
-    }
-    if (_answerStatus == 'incorrect') {
-      return RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)
-        ),
-        elevation: 4,
-        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-        onPressed: () {
-          if (_isDone == false) {
-            // Start next question
-            _initQuestion();
-          } else if (_isDone == true) {
-            // End exercise
-            _showSummary();
-            // widget._navigatorKey.currentState.pushNamed('/home');
-          }
-        },
-        color: Colors.red,
-        textColor: Colors.white,
-        child: Text(
-            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-        ),
-      );
-    }
-
-    return null;
-  }
-
   void _showSummary() {
     widget._viewModel.currentUser.getIdToken()
       .then((tokenRes) {
@@ -346,69 +273,227 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     );
   }
 
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        LinearPercentIndicator(
+          lineHeight: 18.0,
+          percent: _questionsAnswered / _questionsTotal,
+          backgroundColor: Colors.grey[350],
+          progressColor: Colors.blue[300],
+        ),
+        SizedBox(height: 15,),
+        Text('Sắp xếp lại câu', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),
+        SizedBox(height: 15,),
+        Text(_question != null ? _question['questionStr'] : 'Câu hỏi', style: TextStyle(color: Colors.black87, fontSize: 20)),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.only(bottom: 15),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(width: 2, color: Colors.grey[400]))
+          ),
+          child: Wrap(
+            children: _renderSelectingWordPieces(),
+          )
+        ),
+        SizedBox(height: 25,),
+        Center(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            children: _renderChoiceWordPieces(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _getCheckSectionColor() {
+    if (_answerStatus == 'correct') {
+      return Colors.green[200];
+    }
+
+    if (_answerStatus == 'incorrect') {
+      return Colors.red[200];
+    }
+
+    return Colors.transparent;
+  }
+
+  Widget _renderCheckButton() {
+    if (_answerStatus == 'correct') {
+      return RaisedButton(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0)
+        ),
+        elevation: 4,
+        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+        onPressed: () {
+          if (_isDone == false) {
+            // Start next question
+            _initQuestion();
+          } else if (_isDone == true) {
+            // End exercise
+            _showSummary();
+          }
+        },
+        color: Colors.green[500],
+        textColor: Colors.white,
+        child: Text(
+            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+        ),
+      );
+    }
+    if (_answerStatus == 'incorrect') {
+      return RaisedButton(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0)
+        ),
+        elevation: 4,
+        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+        onPressed: () {
+          if (_isDone == false) {
+            // Start next question
+            _initQuestion();
+          } else if (_isDone == true) {
+            // End exercise
+            _showSummary();
+          }
+        },
+        color: Colors.red,
+        textColor: Colors.white,
+        child: Text(
+            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+        ),
+      );
+    }
+
+    return RaisedButton(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0)
+      ),
+      elevation: 4,
+      padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+      onPressed: () {
+        _checkAnswer();
+      },
+      color: Colors.green[400],
+      textColor: Colors.white,
+      child: Text(
+          'KIỂM TRA',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+      ),
+    );
+  }
+
+  Widget _renderAnswerStatusText() {
+    if (_answerStatus == 'correct') {
+      return Text(
+        'Chính xác',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.green[600],
+          fontSize: 24,
+        )
+      );
+    }
+
+    if (_answerStatus == 'incorrect') {
+      return Text(
+        'Sai rồi',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red[700],
+          fontSize: 24,
+        )
+      );
+    }
+
+    return Text('');
+  }
+
+  Widget _buildCheckSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Container(
+        //   padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+        //   width: double.infinity,
+        //   child: _renderCheckButton(),
+        // ),
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(left: 10, right: 10),
+            color: _getCheckSectionColor(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                SizedBox(height: 16,),
+                Container(
+                  // padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                  width: double.infinity,
+                  child: _renderCheckButton(),
+                ),
+                SizedBox(height: 16,),
+                _renderAnswerStatusText(),
+                SizedBox(height: 10,),
+                Text(
+                  _correctAnswer != '' ? 'Đáp án đúng: ' + _correctAnswer : '',
+                  style: TextStyle(color: Colors.red[600], fontWeight: FontWeight.bold),
+                )
+              ],
+            )
+          )
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bilinguo',
+      title: 'Bilinguo Exercise',
       theme: ThemeData(
         fontFamily: 'Varela',
       ),
       home: Scaffold(
         body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                LinearPercentIndicator(
-                  lineHeight: 18.0,
-                  percent: _questionsAnswered / _questionsTotal,
-                  backgroundColor: Colors.grey[350],
-                  progressColor: Colors.orange[400],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  child: _buildHeader(),
                 ),
-                SizedBox(height: 15,),
-                Text('Chọn câu đúng', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),
-                SizedBox(height: 15,),
-                Text(_question != null ? _question['questionStr'] : 'Câu hỏi', style: TextStyle(color: Colors.black87, fontSize: 20)),
-                SizedBox(height: 75,),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.only(bottom: 15),
-                  decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(width: 2, color: Colors.grey[400]))
-                  ),
-                  child: Wrap(
-                    children: _renderSelectingWordPieces(),
-                  )
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: _buildContent(),
                 ),
-                SizedBox(height: 50,),
-                Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    children: _renderChoiceWordPieces(),
-                  ),
-                ),
-                SizedBox(height: 75,),
-                Container(
-                  padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-                  width: double.infinity,
-                  child: _renderCheckButton(),
-                ),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    color: Colors.green[200],
-                    child: Text(
-                      _correctAnswer != '' ? 'Đáp án đúng: ' + _correctAnswer : '',
-                      style: TextStyle(color: Colors.green[600], fontWeight: FontWeight.bold),
-                    )
-                  )
-                ),
-              ],
-            ),
-          )
-        ),
-      ),
+              ),
+              Expanded(
+                flex: 2,
+                child: _buildCheckSection(),
+              ),
+            ],
+          ),
+        )
+      )
     );
   }
 }
