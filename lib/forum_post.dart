@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import './utils/HexColor.dart';
 import './models/Post.dart';
 import './models/User.dart';
-import './models/Topic.dart';
 import './models/Comment.dart';
 import './mock-data.dart';
 import './utils/Helper.dart';
-import 'package:uuid/uuid.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 //user when loading not done. Won't show
 User dummyUser = User(
@@ -31,11 +28,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   bool _isUpdatingPostVote = false;
   List<bool> _isUpdatingCommentVote;
   bool _isPosting = false;
-  // List<User> _users = [];
-  // List<Topic> _topics = [];
-  // Topic _topic = Topic(id: 'null', name: '?', backgroundColor: '#ffffff');
-  // List<Post> _posts = [];
-  // String _newComment = '';
+
   final commentController = TextEditingController();
 
   @override
@@ -64,104 +57,6 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     .catchError((err) {
       print(err);
     });
-    // Firestore.instance
-    //   .collection('posts')
-    //   .document(widget.post.id)
-    //   .get()
-    //   .then((DocumentSnapshot ds) {
-    //     // use ds as a snapshot
-    //     setState(() {
-    //       _topic = Topic(
-    //         id: ds.documentID,
-    //         name: ds.data['name'],
-    //         backgroundColor: ds.data['backgroundColor'],
-    //       );
-    //     });
-    //     setState(() {
-    //       _post = Post(
-    //         id: ds.documentID,
-    //         title: ds.data['title'],
-    //         // authorUid: ds.data['authorUid'],
-    //         // authorEmail: ds.data['authorEmail'],
-    //         // topicId: ds.data['topicId'],
-    //         content: ds.data['content'],
-    //         upvoteCount: ds.data['upvoteCount'],
-    //         downvoteCount: ds.data['downvoteCount'],
-    //         postedTime: ds.data['postedTime'],
-    //         upvoters: new List<String>.from(ds.data['upvoters']),
-    //         downvoters: new List<String>.from(ds.data['downvoters']),
-    //         commentCount: 0,
-    //         comments: [],
-    //       );
-    //     });
-    //     Firestore.instance
-    //       .collection('posts')
-    //       .document(ds.documentID)
-    //       .collection('comments')
-    //       .snapshots()
-    //       .listen((data) =>
-    //           data.documents.forEach((doc) => {
-    //             setState(() {
-    //               _post.comments.add(
-    //                 Comment(
-    //                   id: doc.documentID,
-    //                   authorUid: doc['authorUid'],
-    //                   authorEmail: doc['authorEmail'],
-    //                   content: doc['content'],
-    //                   upvoteCount: doc['upvoteCount'],
-    //                   downvoteCount: doc['downvoteCount'],
-    //                   postedTime: doc['postedTime'],
-    //                   upvoters: new List<String>.from(doc['upvoters']),
-    //                   downvoters: new List<String>.from(doc['downvoters']),
-    //                 )
-    //               );
-    //               _post.commentCount += 1;
-    //             })
-    //           }));
-    //   });
-
-    // // _users = mockUsers; // TODO: API GET
-    // _users = [];
-    // Firestore.instance
-    //   .collection('users')
-    //   .snapshots()
-    //   .listen((data) => data.documents.forEach((doc) => {
-    //     // _topics.add(
-    //     //   Topic(
-    //     //     id: doc.documentID,
-    //     //     name: doc['name'],
-    //     //     backgroundColor: doc['backgroundColor'],
-    //     //   )
-    //     // )
-    //     setState(() {
-    //       _users.add(
-    //         User(
-    //           uid: doc['uid'],
-    //           displayName: doc['displayName'],
-    //           profilePicture: 'mock-users/anon.jpg',
-    //           email: doc['email'],
-    //         ));
-    //     })
-    //     // _topics.forEach((f) => print(f.name))
-    //   }));
-
-    
-    // // _topics = mockTopics; // TODO: API GET
-    // Firestore.instance
-    //   .collection('topics')
-    //   .document(widget.post.topic.id)
-    //   .get()
-    //   .then((DocumentSnapshot ds) {
-    //     // use ds as a snapshot
-    //     setState(() {
-    //       _topic = Topic(
-    //         id: ds.documentID,
-    //         name: ds.data['name'],
-    //         backgroundColor: ds.data['backgroundColor'],
-    //       );
-    //     });
-    //   });
-    // _posts = []; // TODO: API GET
   }
 
   @override
@@ -169,20 +64,6 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     commentController.dispose();
     super.dispose();
   }
-
-
-  // _getUserByUid(uid) {
-  //   return _users.firstWhere((user) => user.uid == uid);
-  // }
-
-  // _getUserByEmail(email) {
-  //   return _users.firstWhere((user) => user.email == email,
-  //     orElse: () => User(uid: 'null', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'));
-  // }
-
-  // _getTopicById(topicId) {
-  //   return _topics.firstWhere((topic) => topic.id == topicId);
-  // }
 
   _getSortedCommentList(comments) {
     //sort by comment time
@@ -198,12 +79,6 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
 
     return post.downvoters.contains(currentUser.email);
   }
-
-  // _handleNewCommentChanged(comment) {
-  //   setState(() {
-  //     newComment = commentController.text.trim();
-  //   });
-  // }
 
   _handlePostNewComment(context) {
     if (commentController.text.trim() == '') {
@@ -235,30 +110,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
         _isPosting = false;
       });
     });
-    // var uuid = Uuid();
-    // Comment newComment = new Comment(
-    //   id: uuid.v4(),
-    //   authorUid: currentUser.uid,
-    //   content: commentController.text.trim(),
-    //   upvoteCount: 0,
-    //   downvoteCount: 0,
-    //   postedTime: DateTime.now().toIso8601String(),
-    //   upvoters: [],
-    //   downvoters: [],
-    // );
-    // print(_posts.length);
-    // var postIndex = _posts.indexWhere((post) => post.id == _post.id);
-    // var post = _post;
-    // post.comments.add(newComment);
-    // mockPosts[postIndex] = post; //TODO: API POST
-    // setState(() {
-    //   _posts = mockPosts; //TODO: API GET
-    //   _post = _posts[postIndex];
-    // });
-    // Scaffold.of(context).showSnackBar(SnackBar(
-    //   content: Text('Đăng bình luận thành công!'),
-    //   backgroundColor: Color(0xff00C851),
-    // ));
+
     Navigator.of(context).pop();
     commentController.clear();
     // var post = _post;
@@ -458,36 +310,6 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     .catchError((err) {
       print(err);
     });
-    // // print(voteType);
-    // var comments = _post.comments;
-    // var commentIndex = comments.indexWhere((_comment) => _comment.id == comment.id);
-    // var postIndex = _posts.indexWhere((post) => post.id == _post.id);
-    // if (voteType == 'upvote') {
-    //   if (_isPostUpvotedByCurrentUser(comment)) {
-    //     comments[commentIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
-    //   }
-    //   else {
-    //     comments[commentIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
-    //     comments[commentIndex].upvoters.add(currentUser.uid);
-    //   }
-    // }
-    // else if (voteType == 'downvote') {
-    //   if (_isPostDownvotedByCurrentUser(comment)) {
-    //     comments[commentIndex].downvoters.removeWhere((downvoterUid) => downvoterUid == currentUser.uid);
-    //   }
-    //   else {
-    //     comments[commentIndex].upvoters.removeWhere((upvoterUid) => upvoterUid == currentUser.uid);
-    //     comments[commentIndex].downvoters.add(currentUser.uid);
-    //   }
-    // }
-    // comments[commentIndex].upvoteCount = comments[commentIndex].upvoters.length;
-    // comments[commentIndex].downvoteCount = comments[commentIndex].downvoters.length;
-    // _post.comments = [ ...comments ];
-    // // mockPosts[postIndex] = _post; //TODO: API POST
-    // // setState(() {
-    // //   _posts = mockPosts; //TODO: API GET
-    // //   _post = _posts[postIndex];
-    // // });
   }
 
   Widget _buildComment(comment) {
@@ -499,16 +321,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)],
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black26,
-          //     blurRadius: 0.0,
-          //     offset: Offset(0.0, 1),
-          //     spreadRadius: 3.0,
-          //   )
-          // ],
-          
+          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)],   
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

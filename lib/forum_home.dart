@@ -511,7 +511,7 @@ class ForumHomeScreen extends StatelessWidget {
                     child: FloatingActionButton(
                       onPressed: () { onNewPostTap(); },
                       backgroundColor: HexColor('1cb0f6'),
-                      child: Icon(Icons.comment),
+                      child: Icon(Icons.add),
                     ),
                   ),
                 ],
