@@ -1,7 +1,12 @@
+import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:bilinguo_flutter/models/Course.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'mock-data.dart';
 import 'utils/HexColor.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:http/http.dart' as http; 
 
 class LearnScreen extends StatelessWidget {
   renderHoneyYouShouldSeeMeInACrown(course) {
@@ -16,7 +21,6 @@ class LearnScreen extends StatelessWidget {
             course.levelReached.toString(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontFamily: 'Varela',
               fontSize: 12,
               color: Colors.deepOrangeAccent,
             ),),
@@ -31,28 +35,61 @@ class LearnScreen extends StatelessWidget {
       ] ;
   }
 
-  renderCourseImage(course) {
-    return course.isUnlocked ?
-      Container(
-        color: HexColor(course.backgroundColor),
-        child: Image.asset(
-          'assets/' + course.unlockedIconUrl,
-          width: 70,
-          fit: BoxFit.cover,
+  renderCourseImage(BuildContext context, Course course) {
+    return StoreConnector(
+      converter: (Store<AppState> store) => ViewModel.create(store),
+      builder: (context, ViewModel viewModel) => GestureDetector(
+        child: Container(
+          color: HexColor(course.backgroundColor),
+          child: Image.asset(
+            'assets/' + course.unlockedIconUrl,
+            width: 70,
+            fit: BoxFit.cover,
+          ),
         ),
+        onTap: () async {
+          // viewModel.currentUser
+          final tokenStr = (await viewModel.currentUser.getIdToken()).token;
+          print('onTap');
+          http.post(
+            'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/startExerciseSession',
+            headers: { 'Authorization': 'Bearer ' + tokenStr },
+            body: { 'courseId': course.id, 'questionsTotal': course.totalQuestions.toString() } // TODO: Bring to backend
+          )
+            .then((response) {
+              print(response.body);
+            })
+            .catchError((err) {
+              print(err);
+            });
+        },
       )
-        :
-      Container(
-        color: Color(0xffe5e5e5),
-        child: Image.asset(
-          'assets/' + course.lockedIconUrl,
-          width: 70,
-          fit: BoxFit.cover,
-        ),
-      );
+    );
+      // GestureDetector(
+      //   child: Container(
+      //     color: HexColor(course.backgroundColor),
+      //     child: Image.asset(
+      //       'assets/' + course.unlockedIconUrl,
+      //       width: 70,
+      //       fit: BoxFit.cover,
+      //     ),
+      //   ),
+      //   onTap: () {
+
+      //   },
+      // )
+      //   :
+      // Container(
+      //   color: Color(0xffe5e5e5),
+      //   child: Image.asset(
+      //     'assets/' + course.lockedIconUrl,
+      //     width: 70,
+      //     fit: BoxFit.cover,
+      //   ),
+      // );
   }
 
-  renderCourseGroup(courseGroup) {
+  renderCourseGroup(BuildContext context, courseGroup) {
     return Column(
       children: courseGroup.rows.map<Widget>((row) => (
         Row(
@@ -74,7 +111,7 @@ class LearnScreen extends StatelessWidget {
                         circularStrokeCap: CircularStrokeCap.round,
                         center: ClipRRect(
                             borderRadius: BorderRadius.circular(100.0),
-                            child: renderCourseImage(course),
+                            child: renderCourseImage(context, course),
                         ),
                         progressColor: Colors.orangeAccent,
                         backgroundColor: Colors.black12,
@@ -93,7 +130,6 @@ class LearnScreen extends StatelessWidget {
                   Text(
                     course.name,
                     style: TextStyle(
-                      fontFamily: 'Varela',
                       fontWeight: FontWeight.bold,
                       color: course.isUnlocked ? Colors.black54 : Colors.black26,
                       fontSize: 18.0,
@@ -115,6 +151,7 @@ class LearnScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
+            height: 57,
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             decoration: new BoxDecoration(
               color: Colors.white,
@@ -138,7 +175,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '8',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffffc800),
                           fontSize: 16
@@ -152,7 +188,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '1',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff9600),
                           fontSize: 16
@@ -166,7 +201,6 @@ class LearnScreen extends StatelessWidget {
                     Text(
                       '66',
                       style: TextStyle(
-                          fontFamily: 'Varela',
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff4b4b),
                           fontSize: 16
@@ -181,8 +215,8 @@ class LearnScreen extends StatelessWidget {
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
-                  renderCourseGroup(courseGroup1),
-                  renderCourseGroup(courseGroup2),
+                  renderCourseGroup(context, courseGroup1),
+                  renderCourseGroup(context, courseGroup2),
                 ],
               )
             ),

@@ -1,12 +1,19 @@
 import 'package:bilinguo_flutter/profile.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
 
 import 'achievement.dart';
 import 'learn.dart';
 import 'shop.dart';
+import 'forum.dart';
 
 class HomeScreen extends StatefulWidget {
+  final ViewModel _viewModel;
+
+  HomeScreen(this._viewModel);
+
   @override
   State<StatefulWidget> createState() {
     return _HomeScreenState();
@@ -14,11 +21,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+
   int _currentIndex = 0;
   final List<Widget> _children = [
     LearnScreen(),
     AchievementScreen(),
-    PlaceholderWidget(Colors.green),
+    ForumScreen(),
     ShopScreen(),
     ProfileScreen(),
   ];
@@ -29,6 +38,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // @override void initState() {
+  //   super.initState();
+
+  //   // _auth.currentUser()
+  //   //   .then((currentUser) {
+  //   //     widget._viewModel.onSetCurrentUser(currentUser);
+  //   //     currentUser.getIdToken().then((onValue) {
+  //   //       print(onValue.token);
+  //   //     });
+  //   //   })
+  //   //   .catchError((err) {
+  //   //     print(err);
+  //   //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -36,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Bilinguo',
       theme: ThemeData(
 //        primaryColor: Colors.white,
-        fontFamily: 'Varela',
+        fontFamily: 'Quicksand',
       ),
       home: Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -50,11 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: onTabTapped,
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
+            selectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
+            unselectedLabelStyle: TextStyle( fontWeight: FontWeight.w500 ),
             items: [
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/learn.png', height: 30),
                 icon: Image.asset('assets/icons/learn_inactive.png', height: 30),
-                title: Text('Bài tập'),
+                title: Text('Bài học'),
               ),
               BottomNavigationBarItem(
                 activeIcon: Image.asset('assets/icons/achievements.png', height: 30),

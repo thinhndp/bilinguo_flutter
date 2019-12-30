@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "38128598020",
+    "firebase_url": "https://fb-cloud-functions-demo-4de69.firebaseio.com",
+    "project_id": "fb-cloud-functions-demo-4de69",
+    "storage_bucket": "fb-cloud-functions-demo-4de69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38128598020:android:fbb517162ceacaea0c4951",
+        "android_client_info": {
+          "package_name": "com.horsemen.bilinguo_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "38128598020-rapsculbhjjc167pjrv0a0i3af9iq2qq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.horsemen.bilinguo_flutter",
+            "certificate_hash": "109a9247ac7cdd68edb61f4046422f7d17c7b96f"
+          }
+        },
+        {
+          "client_id": "38128598020-fd3lida8l90bk2tmf93u84328pa64jda.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAXSRw7_OZOKNLm5xH9dSPmsvZL8QTr4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "38128598020-fd3lida8l90bk2tmf93u84328pa64jda.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
