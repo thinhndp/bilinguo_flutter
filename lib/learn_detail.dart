@@ -1,7 +1,9 @@
 import 'package:bilinguo_flutter/models/Achievement.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:bilinguo_flutter/utils/Helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'mock-data.dart';
 // import 'utils/HexColor.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -23,6 +25,7 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   var _questionsAnswered = 0;
   var _questionsAnsweredCorrect = 0;
   var _questionsTotal = 5;
+  DateTime _testDateTime = new DateTime(2019, 9, 22);
 
   // eng-vie-sentence-ordering
   List<dynamic> _wordChoices = [];
@@ -109,7 +112,8 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
             final responseJSON = json.decode(response.body);
             print(responseJSON);
             setState(() {
-              _isDone = responseJSON['isDone'];
+              // _isDone = responseJSON['isDone'];
+              _isDone = true;
             });
             if (responseJSON['isCorrect'] == true) {
               setState(() {
@@ -229,7 +233,7 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
             print('complete');
             final responseJSON = json.decode(response.body);
             print(responseJSON);
-            _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal']);
+            _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
           })
           .catchError((err) {
             print('error');
@@ -242,7 +246,11 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
       });
   }
 
-  void _showSummaryDialog(int questionsCorrect, int questionsTotal) {
+  void _showSummaryDialog(int questionsCorrect, int questionsTotal, DateTime startAt) {
+    double accuracy = questionsTotal != 0 ? questionsCorrect / questionsTotal : 0;
+    DateTime now = new DateTime.now();
+    Duration completionTime = now.difference(startAt);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -253,8 +261,68 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('Total Questions: ' + questionsTotal.toString()),
-              Text('Correct Answers: ' + questionsCorrect.toString()),
+              Center(
+                child: Column(
+                  children: <Widget>[
+                    CircularPercentIndicator(
+                      radius: 120.0,
+                      lineWidth: 15.0,
+                      percent: accuracy,
+                      center: Text(
+                        '${accuracy * 100}%',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.green[600],
+                        ),
+                      ),
+                      progressColor: Colors.green[400],
+                      animation: true,
+                    ),
+                    Text(
+                      'Excellent',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.green[600],
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10,),
+              Divider(
+                color: Colors.grey[600],
+                height: 2.0,
+              ),
+              SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Correct Answers:', style: TextStyle(color: Colors.black87),),
+                  Text(
+                    questionsCorrect.toString() + '/' + questionsTotal.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Completion Time:', style: TextStyle(color: Colors.black87),),
+                  Text(
+                    Helper.printDuration(completionTime),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)
+                  ),
+                ],
+              ),
+              // Text(
+              //   'Correct Answers: ' + questionsCorrect.toString() + '/' + questionsTotal.toString(),
+              //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+              // ),
+              // Text(
+              //   'Duration: ' + '00:14:39',
+              //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+              // ),
             ],
           ),
           // content: Text('Total Questions: ' + questionsTotal.toString()),
