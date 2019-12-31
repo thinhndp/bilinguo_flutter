@@ -155,7 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     borderRadius: BorderRadius.circular(16.0)
                   ),
                   elevation: 4,
-                  padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+                  padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
                   onPressed: () {
                     if (widget._viewModel.currentUser == null) {
                       Navigator.pushNamed(context, '/sign-in');
