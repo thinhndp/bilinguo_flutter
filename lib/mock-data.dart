@@ -9,7 +9,7 @@ import 'models/Topic.dart';
 import 'models/Comment.dart';
 
 Course coBan1 = new Course(
-  '0',
+  'zD10RgGnrxBb4oJ94ltx',
   'Cơ bản 1',
   'unlocked-exercise-icons/co-ban-1.png',
   'locked-exercise-icons/co-ban-1.png',
@@ -21,7 +21,7 @@ Course coBan1 = new Course(
 );
 
 Course coBan2 = new Course(
-  '1',
+  'zYwXzXPpoXCa9xQB0bK9',
   'Cơ bản 2',
   'unlocked-exercise-icons/co-ban-2.png',
   'locked-exercise-icons/co-ban-2.png',
@@ -33,7 +33,7 @@ Course coBan2 = new Course(
 );
 
 Course cumTu = new Course(
-  '2',
+  '2q6jtP5mTSMfMN3PPxxu',
   'Cụm từ',
   'unlocked-exercise-icons/cum-tu.png',
   'locked-exercise-icons/cum-tu.png',
@@ -45,7 +45,7 @@ Course cumTu = new Course(
 );
 
 Course monAn = new Course(
-  '3',
+  'ajTiyifX0azPnvxljsUQ',
   'Món ăn',
   'unlocked-exercise-icons/mon-an.png',
   'locked-exercise-icons/mon-an.png',
@@ -57,7 +57,7 @@ Course monAn = new Course(
 );
 
 Course dongVat = new Course(
-  '4',
+  'ILsUpVUgGX11xGkHanRY',
   'Động vật',
   'unlocked-exercise-icons/dong-vat.png',
   'locked-exercise-icons/dong-vat.png',
@@ -69,7 +69,7 @@ Course dongVat = new Course(
 );
 
 Course soNhieu = new Course(
-  '5',
+  'XsvTxj4kp9jfJQoMERZz',
   'Số Nhiều',
   'unlocked-exercise-icons/so-nhieu.png',
   'locked-exercise-icons/so-nhieu.png',

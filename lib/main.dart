@@ -16,11 +16,14 @@ void main() {
     initialState: AppState.initialState(),
   );
 
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
   runApp(
     StoreProvider(
       store: store,
       child: MaterialApp(
         title: 'Deus Vult',
+        navigatorKey: navigatorKey,
         initialRoute: '/',
         routes: {
           '/': (context) => StoreConnector(
@@ -29,10 +32,14 @@ void main() {
           ),
           '/home': (context) => StoreConnector(
             converter: (Store<AppState> store) => ViewModel.create(store),
-            builder: (context, ViewModel viewModel) => HomeScreen(viewModel),
+            builder: (context, ViewModel viewModel) => HomeScreen(navigatorKey, viewModel),
           ),
           '/sign-in': (context) => SignInScreen(),
-          '/learn-detail': (context) => LearnDetailScreen(),
+          // '/learn-detail': (context) => LearnDetailScreen(),
+          '/learn-detail': (context) => StoreConnector(
+            converter: (Store<AppState> store) => ViewModel.create(store),
+            builder: (context, ViewModel viewModel) => LearnDetailScreen(navigatorKey, viewModel),
+          )
         },
       )
     )
@@ -176,23 +183,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   elevation: 4,
                   padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
                   onPressed: () async {
-                    final tokenStr = (await widget._viewModel.currentUser.getIdToken()).token;
+                    Navigator.pushNamed(context, '/learn-detail');
+                    // final tokenStr = (await widget._viewModel.currentUser.getIdToken()).token;
 
-                    print('called');
+                    // print('called');
 
-                    http.post(
-                      'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getSessionQuestion',
-                      headers: { 'Authorization': 'Bearer ' + tokenStr },
-                      body: {  }
-                    )
-                      .then((response) {
-                        print('complete');
-                        print(response.body);
-                      })
-                      .catchError((err) {
-                        print('error');
-                        print(err);
-                      });
+                    // http.post(
+                    //   'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getSessionQuestion',
+                    //   headers: { 'Authorization': 'Bearer ' + tokenStr },
+                    //   body: {  }
+                    // )
+                    //   .then((response) {
+                    //     print('complete');
+                    //     print(response.body);
+                    //   })
+                    //   .catchError((err) {
+                    //     print('error');
+                    //     print(err);
+                    //   });
                   },
                   color: Colors.white,
                   textColor: Colors.lightGreen,

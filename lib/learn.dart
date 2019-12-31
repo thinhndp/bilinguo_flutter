@@ -9,6 +9,10 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:http/http.dart' as http; 
 
 class LearnScreen extends StatelessWidget {
+  final GlobalKey<NavigatorState> _navigatorKey;
+
+  LearnScreen(this._navigatorKey);
+
   renderHoneyYouShouldSeeMeInACrown(course) {
     return course.levelReached > 0 ?
       <Widget>[
@@ -52,12 +56,14 @@ class LearnScreen extends StatelessWidget {
           final tokenStr = (await viewModel.currentUser.getIdToken()).token;
           print('onTap');
           http.post(
-            'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/startExerciseSession',
+            'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/startLearnSession',
             headers: { 'Authorization': 'Bearer ' + tokenStr },
             body: { 'courseId': course.id, 'questionsTotal': course.totalQuestions.toString() } // TODO: Bring to backend
           )
             .then((response) {
               print(response.body);
+              // Navigator.pushNamed(context, '/learn-detail');
+              _navigatorKey.currentState.pushNamed('/learn-detail');
             })
             .catchError((err) {
               print(err);
