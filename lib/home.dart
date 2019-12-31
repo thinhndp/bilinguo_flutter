@@ -8,6 +8,7 @@ import 'achievement.dart';
 import 'learn.dart';
 import 'shop.dart';
 import 'forum.dart';
+import 'profile.dart';
 
 class HomeScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> _navigatorKey;
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _children.add(AchievementScreen());
     _children.add(ForumScreen());
     _children.add(ShopScreen());
-    _children.add(PlaceholderWidget(Colors.deepOrange));
+    _children.add(ProfileScreen());
 
     // _auth.currentUser()
     //   .then((currentUser) {

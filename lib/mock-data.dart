@@ -393,4 +393,4 @@ List<Topic> mockTopics = [
 //   ),
 // ];
 
-User currentUser = User(uid: 'rayhTEOySpeJK1914j8Z0Oas9Yl1', displayName: 'Thinh Nguyen', profilePicture: 'mock-users/ricardo.jpg', email: '16521178@gm.uit.edu.vn');
+User currentUser = User(uid: 'rayhTEOySpeJK1914j8Z0Oas9Yl1', displayName: 'Thinh Nguyen', profilePicture: 'https://i1.sndcdn.com/avatars-000299386246-odndpm-t500x500.jpg', email: '16521178@gm.uit.edu.vn');
