@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:bilinguo_flutter/learn_detail.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:bilinguo_flutter/models/User.dart';
 import 'package:bilinguo_flutter/redux/reducers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,14 +77,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
     _auth.currentUser()
       .then((currentUser) {
-        widget._viewModel.onSetCurrentUser(currentUser);
+        // widget._viewModel.onSetCurrentUser(currentUser);
         currentUser.getIdToken().then((onValue) {
           print(onValue.token);
+
+          http.get(
+            'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getUserByToken',
+            headers: { 'Authorization': 'Bearer ' + onValue.token },
+          )
+            .then((response) {
+              print('complete');
+              final responseJSON = json.decode(response.body);
+              print(responseJSON);
+              User currentUser = new User(
+                token: onValue.token,
+                uid: responseJSON['uid'],
+                email: responseJSON['email'],
+                displayName: responseJSON['displayName'],
+                profilePicture: responseJSON['profilePicture'],
+                fortune: responseJSON['fortune'],
+                inventory: responseJSON['inventory'],
+              );
+              print('day ne');
+              print(currentUser);
+              widget._viewModel.onSetCurrentUser(currentUser);
+              print(widget._viewModel.currentUser);
+            })
+            .catchError((onError) {
+              print(onError);
+            });
         });
       })
       .catchError((err) {
         print(err);
       });
+
   }
 
   @override

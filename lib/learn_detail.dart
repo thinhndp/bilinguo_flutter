@@ -45,29 +45,49 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
   _initQuestion() {
     print('_initQuestion');
-    widget._viewModel.currentUser.getIdToken()
-      .then((tokenRes) {
+    // widget._viewModel.currentUser.getIdToken()
+    //   .then((tokenRes) {
 
-        print('get duoc token');
-        http.post(
-          'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/setQuestionOfCurrentLearnSession',
-          headers: { 'Authorization': 'Bearer ' + tokenRes.token },
-        )
-          .then((response) {
-            print('complete');
-            final learnSession = json.decode(response.body);
-            print(learnSession);
-            setState(() {
-              _questionsAnswered = learnSession['questionsAnswered'];
-              _questionsAnsweredCorrect = learnSession['questionsAnsweredCorrect'];
-              _questionsTotal = learnSession['questionsTotal'];
-            });
-            _setQuestion(learnSession['question']);
-          })
-          .catchError((err) {
-            print('error');
-            print(err);
-          });
+    //     print('get duoc token');
+    //     http.post(
+    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/setQuestionOfCurrentLearnSession',
+    //       headers: { 'Authorization': 'Bearer ' + tokenRes.token },
+    //     )
+    //       .then((response) {
+    //         print('complete');
+    //         final learnSession = json.decode(response.body);
+    //         print(learnSession);
+    //         setState(() {
+    //           _questionsAnswered = learnSession['questionsAnswered'];
+    //           _questionsAnsweredCorrect = learnSession['questionsAnsweredCorrect'];
+    //           _questionsTotal = learnSession['questionsTotal'];
+    //         });
+    //         _setQuestion(learnSession['question']);
+    //       })
+    //       .catchError((err) {
+    //         print('error');
+    //         print(err);
+    //       });
+    //   })
+    //   .catchError((err) {
+    //     print('error');
+    //     print(err);
+    //   });
+
+    http.post(
+      'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/setQuestionOfCurrentLearnSession',
+      headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
+    )
+      .then((response) {
+        print('complete');
+        final learnSession = json.decode(response.body);
+        print(learnSession);
+        setState(() {
+          _questionsAnswered = learnSession['questionsAnswered'];
+          _questionsAnsweredCorrect = learnSession['questionsAnsweredCorrect'];
+          _questionsTotal = learnSession['questionsTotal'];
+        });
+        _setQuestion(learnSession['question']);
       })
       .catchError((err) {
         print('error');
@@ -99,39 +119,70 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
     print(answer);
 
-    widget._viewModel.currentUser.getIdToken()
-      .then((tokenRes) {
+    // widget._viewModel.currentUser.getIdToken()
+    //   .then((tokenRes) {
 
-        http.post(
-          'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/checkSessionQuestionAnswer',
-          headers: { 'Authorization': 'Bearer ' + tokenRes.token },
-          body: { 'answer': answer },
-        )
-          .then((response) {
-            print('complete');
-            final responseJSON = json.decode(response.body);
-            print(responseJSON);
-            setState(() {
-              // _isDone = responseJSON['isDone'];
-              _isDone = true;
-            });
-            if (responseJSON['isCorrect'] == true) {
-              setState(() {
-                _answerStatus = 'correct';
-              });
-            } else if (responseJSON['isCorrect'] == false) {
-              setState(() {
-                _answerStatus = 'incorrect';
-                _correctAnswer = responseJSON['correctAnswer'];
-              });
-            } else {
-              print('co gi do khong on');
-            }
-          })
-          .catchError((err) {
-            print('error');
-            print(err);
+    //     http.post(
+    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/checkSessionQuestionAnswer',
+    //       headers: { 'Authorization': 'Bearer ' + tokenRes.token },
+    //       body: { 'answer': answer },
+    //     )
+    //       .then((response) {
+    //         print('complete');
+    //         final responseJSON = json.decode(response.body);
+    //         print(responseJSON);
+    //         setState(() {
+    //           // _isDone = responseJSON['isDone'];
+    //           _isDone = true;
+    //         });
+    //         if (responseJSON['isCorrect'] == true) {
+    //           setState(() {
+    //             _answerStatus = 'correct';
+    //           });
+    //         } else if (responseJSON['isCorrect'] == false) {
+    //           setState(() {
+    //             _answerStatus = 'incorrect';
+    //             _correctAnswer = responseJSON['correctAnswer'];
+    //           });
+    //         } else {
+    //           print('co gi do khong on');
+    //         }
+    //       })
+    //       .catchError((err) {
+    //         print('error');
+    //         print(err);
+    //       });
+    //   })
+    //   .catchError((err) {
+    //     print('error');
+    //     print(err);
+    //   });
+
+    http.post(
+      'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/checkSessionQuestionAnswer',
+      headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
+      body: { 'answer': answer },
+    )
+      .then((response) {
+        print('complete');
+        final responseJSON = json.decode(response.body);
+        print(responseJSON);
+        setState(() {
+          // _isDone = responseJSON['isDone'];
+          _isDone = true;
+        });
+        if (responseJSON['isCorrect'] == true) {
+          setState(() {
+            _answerStatus = 'correct';
           });
+        } else if (responseJSON['isCorrect'] == false) {
+          setState(() {
+            _answerStatus = 'incorrect';
+            _correctAnswer = responseJSON['correctAnswer'];
+          });
+        } else {
+          print('co gi do khong on');
+        }
       })
       .catchError((err) {
         print('error');
@@ -222,23 +273,38 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   }
 
   void _showSummary() {
-    widget._viewModel.currentUser.getIdToken()
-      .then((tokenRes) {
+    // widget._viewModel.currentUser.getIdToken()
+    //   .then((tokenRes) {
 
-        http.get(
-          'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getCurrentLearnSession',
-          headers: { 'Authorization': 'Bearer ' + tokenRes.token },
-        )
-          .then((response) {
-            print('complete');
-            final responseJSON = json.decode(response.body);
-            print(responseJSON);
-            _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
-          })
-          .catchError((err) {
-            print('error');
-            print(err);
-          });
+    //     http.get(
+    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getCurrentLearnSession',
+    //       headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
+    //     )
+    //       .then((response) {
+    //         print('complete');
+    //         final responseJSON = json.decode(response.body);
+    //         print(responseJSON);
+    //         _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
+    //       })
+    //       .catchError((err) {
+    //         print('error');
+    //         print(err);
+    //       });
+    //   })
+    //   .catchError((err) {
+    //     print('error');
+    //     print(err);
+    //   });
+
+    http.get(
+      'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getCurrentLearnSession',
+      headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
+    )
+      .then((response) {
+        print('complete');
+        final responseJSON = json.decode(response.body);
+        print(responseJSON);
+        _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
       })
       .catchError((err) {
         print('error');

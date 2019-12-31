@@ -1,6 +1,7 @@
 import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:bilinguo_flutter/models/User.dart';
 import 'package:bilinguo_flutter/redux/actions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 AppState appStateReducer(AppState state, dynamic action) {
   return AppState(
@@ -8,7 +9,7 @@ AppState appStateReducer(AppState state, dynamic action) {
   );
 }
 
-FirebaseUser userReducer(FirebaseUser state, action) {
+User userReducer(User state, action) {
   if (action is ActionSetUser) {
     return action.user;
   }
