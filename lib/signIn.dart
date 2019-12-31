@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:bilinguo_flutter/models/AppState.dart';
+import 'package:bilinguo_flutter/models/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:http/http.dart' as http;
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -31,7 +35,32 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         print('handle' + _email);
         final FirebaseUser user = (await _auth.signInWithEmailAndPassword(email: _email, password: _password)).user;
-        viewModel.onSetCurrentUser(user);
+        user.getIdToken()
+          .then((onValue) {
+            http.get(
+              'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getUserByToken',
+              headers: { 'Authorization': 'Bearer ' + onValue.token },
+            )
+              .then((response) {
+                print('complete');
+                final responseJSON = json.decode(response.body);
+                print(responseJSON);
+                User currentUser = new User(
+                  token: onValue.token,
+                  uid: responseJSON['uid'],
+                  email: responseJSON['email'],
+                  displayName: responseJSON['displayName'],
+                  profilePicture: responseJSON['profilePicture'],
+                  fortune: responseJSON['fortune'],
+                  inventory: responseJSON['inventory'],
+                );
+                viewModel.onSetCurrentUser(currentUser);
+              });
+          })
+          .catchError((onError) {
+            print(onError);
+          });
+        // viewModel.onSetCurrentUser(user);
         print((await user.getIdToken()).token);
         print('Sign in successfully.');
       } on PlatformException catch (err) {

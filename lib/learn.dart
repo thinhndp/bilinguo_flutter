@@ -53,11 +53,11 @@ class LearnScreen extends StatelessWidget {
         ),
         onTap: () async {
           // viewModel.currentUser
-          final tokenStr = (await viewModel.currentUser.getIdToken()).token;
+          // final tokenStr = (await viewModel.currentUser.getIdToken()).token;
           print('onTap');
           http.post(
             'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/startLearnSession',
-            headers: { 'Authorization': 'Bearer ' + tokenStr },
+            headers: { 'Authorization': 'Bearer ' + viewModel.currentUser.token },
             body: { 'courseId': course.id, 'questionsTotal': course.totalQuestions.toString() } // TODO: Bring to backend
           )
             .then((response) {

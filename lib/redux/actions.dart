@@ -1,3 +1,4 @@
+import 'package:bilinguo_flutter/models/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 enum Action {
@@ -5,7 +6,7 @@ enum Action {
 }
 
 class ActionSetUser {
-  final FirebaseUser user;
+  final User user;
 
   ActionSetUser(this.user);
 }
