@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class User {
   String token;
   String uid;
@@ -15,5 +17,15 @@ class User {
     this.profilePicture = profilePicture;
     this.fortune = fortune;
     this.inventory = inventory != null ? List.from(inventory) : [] ;
+    this.email = email;
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      uid: json['uid'],
+      displayName: json['displayName'],
+      profilePicture: json['profilePicture'],
+      email: json['email'],
+    );
   }
 }
