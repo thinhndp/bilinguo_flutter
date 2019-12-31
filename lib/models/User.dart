@@ -6,10 +6,10 @@ class User {
   String email;
   String displayName;
   String profilePicture;
-  double fortune;
+  int fortune;
   List<dynamic> inventory;
 
-  User({String token, String uid, String email, String displayName, String profilePicture, double fortune, List<dynamic> inventory}) {
+  User({String token, String uid, String email, String displayName, String profilePicture, int fortune, List<dynamic> inventory}) {
     this.token = token;
     this.uid = uid;
     this.email = email;

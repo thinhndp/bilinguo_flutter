@@ -46,7 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Future chooseFile() async {
               await ImagePicker.pickImage(source: ImageSource.gallery)
                   .then((image) {
-                // print('ay');
+                print(image);
+                print(image.path);
                 setModalState(() {
                   _image = image;
                 });
@@ -92,8 +93,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //     height: 150,
                         //   )
                         ? ClipOval(
-                            child: Image.asset(
-                              _image.path,
+                            child: Image.file(
+                              _image,
                               // width: 100,
                               // height: 100,
                               height: 150,
