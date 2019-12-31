@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:bilinguo_flutter/utils/HexColor.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as Path;
 import './mock-data.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -9,6 +13,194 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isEditingProfile = false;
+  File _image;
+  String _uploadedFileURL;
+  bool _isUpdatingUserInfo = false;
+
+  Future uploadFile() async {
+    setState(() {
+      _isUpdatingUserInfo = true;
+    });
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('profiles/${Path.basename(_image.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedFileURL = fileURL;
+        _isUpdatingUserInfo = false;
+      });
+    });
+  }
+
+  void _showUploadFileModal() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (context) {
+        // return object of type Dialog
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            Future chooseFile() async {
+              await ImagePicker.pickImage(source: ImageSource.gallery)
+                  .then((image) {
+                // print('ay');
+                setModalState(() {
+                  _image = image;
+                });
+                setState(() {
+                  _image = image;
+                });
+              });
+            }
+
+            clearSelection() {
+              setModalState(() {
+                _image = null;
+                _uploadedFileURL = null;
+              });
+              setState(() {
+                _image = null;
+                _uploadedFileURL = null;
+              });
+            }
+
+            return AlertDialog(
+              title: Text(
+                "Chọn bức ảnh đẹp nhất của bạn để làm ảnh đại diện",
+                style: TextStyle(
+                    fontFamily: 'Quicksand', fontWeight: FontWeight.bold),
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              // content: Text('Bạn có muốn mua "' + item.name + '" với giá ' + item.price.toString() + ' lingots?'),
+              content: Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Ảnh đã chọn',
+                      style: TextStyle(
+                          fontFamily: 'Quicksand', fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 10.0),
+                    _image != null
+                        // ? Image.asset(
+                        //     _image.path,
+                        //     height: 150,
+                        //   )
+                        ? ClipOval(
+                            child: Image.asset(
+                              _image.path,
+                              // width: 100,
+                              // height: 100,
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : ClipOval(
+                            child: Image.asset(
+                              'assets/no-photo.png',
+                              // width: 100,
+                              // height: 100,
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                    SizedBox(height: 20.0),
+                    _image == null
+                        ? RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Container(
+                              width: 80.0,
+                              child: Center(
+                                child: Text('Chọn file'.toUpperCase(),
+                                    style: TextStyle(
+                                        fontFamily: 'Quicksand',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ),
+                            ),
+                            onPressed: chooseFile,
+                            color: Color(0xff1CB0F6),
+                          )
+                        : Container(),
+                    _image != null
+                        ? RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Container(
+                              width: 80.0,
+                              child: Center(
+                                child: Text('Upload'.toUpperCase(),
+                                    style: TextStyle(
+                                        fontFamily: 'Quicksand',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              uploadFile();
+                            },
+                            color: Color(0xff1CB0F6),
+                          )
+                        : Container(),
+                    _image != null
+                        ? RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Container(
+                              width: 80.0,
+                              child: Center(
+                                child: Text('Bỏ chọn'.toUpperCase(),
+                                    style: TextStyle(
+                                        fontFamily: 'Quicksand',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ),
+                            ),
+                            onPressed: () {
+                              clearSelection();
+                            },
+                            color: Color(0xffbbbbbb),
+                          )
+                        : Container(),
+                    // Text('Uploaded Image'),
+                    // _uploadedFileURL != null
+                    //     ? Image.network(
+                    //         _uploadedFileURL,
+                    //         height: 150,
+                    //       )
+                    //     : Container(),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: new Text(
+                    "Đóng".toUpperCase(),
+                    style: TextStyle(
+                      fontFamily: 'Quicksand',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   _handleEditingTap() {
     setState(() {
@@ -33,12 +225,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 onPressed: () {
-                  !_isEditingProfile ? _handleEditingTap() : _handleFinishEditingTap();
+                  !_isEditingProfile
+                      ? _handleEditingTap()
+                      : _handleFinishEditingTap();
                 },
                 padding: EdgeInsets.fromLTRB(16.0, 14.0, 16.0, 14.0),
                 elevation: 4,
                 color: Colors.white,
-                child: Text((!_isEditingProfile ? 'Chỉnh sửa' : 'Hoàn tất').toUpperCase(),
+                child: Text(
+                    (!_isEditingProfile ? 'Chỉnh sửa' : 'Hoàn tất')
+                        .toUpperCase(),
                     style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
@@ -241,174 +437,207 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // ));
     return (Expanded(
       // height: double.infinity,
-      child: Container(
-        padding: EdgeInsets.all(20),
-        // mainAxisSize: MainAxisSize.max,
-        // shrinkWrap: true,
-        child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Flexible(
-                flex: 1,
-                child: Column(
+      child: Stack(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(20),
+            // mainAxisSize: MainAxisSize.max,
+            // shrinkWrap: true,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            "Hồ sơ của bạn",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Stack(
+                            // color: Colors.white,
+                            // child: CircleAvatar(
+                            //   // radius: 40,
+                            //   minRadius: 40.0,
+                            //   maxRadius: 80.0,
+                            //   backgroundImage: NetworkImage("https://www.kragelj.com/wp-content/uploads/2016/11/dummy-profile-pic1.png"),
+                            // ),
+                            children: _isEditingProfile
+                                ? <Widget>[
+                                    InkWell(
+                                      onTap: () {
+                                        _showUploadFileModal();
+                                      },
+                                      // borderRadius: BorderRadius.circular(100.0),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          currentUser.profilePicture,
+                                          // width: 100,
+                                          // height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                color: Colors.blue, width: 1.8),
+                                            borderRadius:
+                                                BorderRadius.circular(100)),
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    )
+                                  ]
+                                : <Widget>[
+                                    ClipOval(
+                                      child: Image.network(
+                                        currentUser.profilePicture,
+                                        // width: 100,
+                                        // height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ]),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
                   children: <Widget>[
                     Row(
                       children: <Widget>[
                         Text(
-                          "Hồ sơ của bạn",
-                          style:
-                              TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          "Tên",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff666666)),
                         ),
                       ],
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Flexible(
-                      flex: 1,
-                      child: Stack(
-                        // color: Colors.white,
-                        // child: CircleAvatar(
-                        //   // radius: 40,
-                        //   minRadius: 40.0,
-                        //   maxRadius: 80.0,
-                        //   backgroundImage: NetworkImage("https://www.kragelj.com/wp-content/uploads/2016/11/dummy-profile-pic1.png"),
-                        // ),
-                        children: _isEditingProfile
-                        ? <Widget>[
-                          InkWell(
-                            onTap: () { print('tap'); },
-                            // borderRadius: BorderRadius.circular(100.0),
-                            child: ClipOval(
-                              child: Image.network(
-                                currentUser.profilePicture,
-                                // width: 100,
-                                // height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.blue, width: 1.8),
-                                borderRadius: BorderRadius.circular(100)
-                              ),
-                              child: Icon(Icons.edit, color: Colors.blue,),
-                            ),
-                          )
-                        ]
-                        : <Widget>[
-                          ClipOval(
-                            child: Image.network(
-                              currentUser.profilePicture,
-                              // width: 100,
-                              // height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ]
+                    TextFormField(
+                      autofocus: false,
+                      enabled: false,
+                      initialValue: currentUser.displayName,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xffeeeeee),
+                        contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16.0)),
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Username",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff666666)),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      autofocus: false,
+                      enabled: false,
+                      initialValue: currentUser.displayName,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xffeeeeee),
+                        contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16.0)),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Email",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff666666)),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      enabled: false,
+                      autofocus: false,
+                      initialValue: currentUser.email,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xffeeeeee),
+                        contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16.0)),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Tên",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xff666666)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    autofocus: false,
-                    enabled: false,
-                    initialValue: currentUser.displayName,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xffeeeeee),
-                      contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0)),
+                Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 30,
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Username",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xff666666)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    autofocus: false,
-                    enabled: false,
-                    initialValue: currentUser.displayName,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xffeeeeee),
-                      contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0)),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Email",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xff666666)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    enabled: false,
-                    autofocus: false,
-                    initialValue: currentUser.email,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xffeeeeee),
-                      contentPadding: EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 10.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0)),
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: <Widget>[
-                  SizedBox(height: 30,),
-                  _renderButtons(),
-                ],
-              ),
-            ],
+                    _renderButtons(),
+                  ],
+                ),
+              ],
+            ),
           ),
+          if (_isUpdatingUserInfo) (
+            Stack(
+              children: <Widget>[
+                Opacity(
+                  opacity: 0.6,
+                  child: ModalBarrier(dismissible: false, color: Colors.white),
+                ),
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ],
+            )
+          ),
+        ],
       ),
     ));
   }
