@@ -76,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       .then((currentUser) {
         widget._viewModel.onSetCurrentUser(currentUser);
         currentUser.getIdToken().then((onValue) {
-          print(onValue.token);
+          // print(onValue.token);
         });
       })
       .catchError((err) {

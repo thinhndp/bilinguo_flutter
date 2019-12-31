@@ -273,36 +273,36 @@ List<Achievement> mockAchievements = <Achievement>[
   ),
 ];
 
-Item streakFreeze = new Item(
-    "Streak Freeze",
-    "Streak Freeze cho phép bạn giữ nguyên streak trong một ngày bạn không có hoạt động nào.",
-    10,
-    "items/streak_freeze.png"
-);
+// Item streakFreeze = new Item(
+//     "Streak Freeze",
+//     "Streak Freeze cho phép bạn giữ nguyên streak trong một ngày bạn không có hoạt động nào.",
+//     10,
+//     "items/streak_freeze.png"
+// );
 
-Item doubleOrNothing = new Item(
-    "Gấp đôi hoặc Mất hết",
-    "Nhận được gấp đôi số lingot từ 5 lingot mà bạn bỏ ra nếu bạn giữ được 7 ngày streak.",
-    5,
-    "items/double_or_nothing.png"
-);
+// Item doubleOrNothing = new Item(
+//     "Gấp đôi hoặc Mất hết",
+//     "Nhận được gấp đôi số lingot từ 5 lingot mà bạn bỏ ra nếu bạn giữ được 7 ngày streak.",
+//     5,
+//     "items/double_or_nothing.png"
+// );
 
-Item ultimateItem = new Item(
-    "ᚱᛁᚲᚨᚱᛞᛟ ᛗᛁᛚᛟᛋ",
-    "ᚨᛚᛚ ᛈᛖᛟᛈᛚᛖ ᚨᚱᛖ ᚲᚱᛖᚨᛏᛖᛞ ᛖᛩᚢᚨᛚ; ᛏᚺᛖᚤ ᚨᚱᛖ ᛖᚾᛞᛟᚹᛖᛞ ᛒᚤ ᛏᚺᛖᛁᚱ ᚲᚱᛖᚨᛏᛟᚱ ᚹᛁᛏᚺ ᚲᛖᚱᛏᚨᛁᚾ ᛁᚾᚨᛚᛁᛖᚾᚨᛒᛚᛖ ᚱᛁᚷᚺᛏᛋ; ᚨᛗᛟᚾᚷ ᛏᚺᛖᛋᛖ ᚨᚱᛖ ᛚᛁᚠᛖ, ᛚᛁᛒᛖᚱᛏᚤ, ᚨᚾᛞ ᛏᚺᛖ ᛈᚢᚱᛋᚢᛁᛏ ᛟᚠ ᚺᚨᛈᛈᛁᚾᛖᛋᛋ.",
-    99999,
-    "items/ultimate_item.jpg"
-);
+// Item ultimateItem = new Item(
+//     "ᚱᛁᚲᚨᚱᛞᛟ ᛗᛁᛚᛟᛋ",
+//     "ᚨᛚᛚ ᛈᛖᛟᛈᛚᛖ ᚨᚱᛖ ᚲᚱᛖᚨᛏᛖᛞ ᛖᛩᚢᚨᛚ; ᛏᚺᛖᚤ ᚨᚱᛖ ᛖᚾᛞᛟᚹᛖᛞ ᛒᚤ ᛏᚺᛖᛁᚱ ᚲᚱᛖᚨᛏᛟᚱ ᚹᛁᛏᚺ ᚲᛖᚱᛏᚨᛁᚾ ᛁᚾᚨᛚᛁᛖᚾᚨᛒᛚᛖ ᚱᛁᚷᚺᛏᛋ; ᚨᛗᛟᚾᚷ ᛏᚺᛖᛋᛖ ᚨᚱᛖ ᛚᛁᚠᛖ, ᛚᛁᛒᛖᚱᛏᚤ, ᚨᚾᛞ ᛏᚺᛖ ᛈᚢᚱᛋᚢᛁᛏ ᛟᚠ ᚺᚨᛈᛈᛁᚾᛖᛋᛋ.",
+//     99999,
+//     "items/ultimate_item.jpg"
+// );
 
-ItemGroup powerUps = new ItemGroup(
-    "Tăng Sức mạnh",
-    [ streakFreeze, doubleOrNothing ]
-);
+// ItemGroup powerUps = new ItemGroup(
+//     "Tăng Sức mạnh",
+//     [ streakFreeze, doubleOrNothing ]
+// );
 
-ItemGroup loremIpsum = new ItemGroup(
-    "Lorem Ipsum",
-    [ ultimateItem ]
-);
+// ItemGroup loremIpsum = new ItemGroup(
+//     "Lorem Ipsum",
+//     [ ultimateItem ]
+// );
 
 List<User> mockUsers = [
   User(uid: 'user0', displayName: 'Anon', profilePicture: 'mock-users/anon.jpg'),
@@ -317,80 +317,80 @@ List<Topic> mockTopics = [
   Topic(id: 'topic3', name: 'Feedback', backgroundColorGradientTop: '#60c3ff', backgroundColorGradientBottom: '#5574f7', backgroundColor: 'CF1CF6'),
 ];
 
-List<Post> mockPosts = [
-  Post(
-    id: 'post0',
-    title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',
-    authorUid: 'user0',
-    topicId: 'topic2',
-    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    upvoteCount: 1,
-    downvoteCount: 1,
-    postedTime: '2019-12-26T01:35:01+0700',
-    upvoters: [ 'user1' ],
-    downvoters: [ 'user2' ],
-    commentCount: 3,
-    comments: [
-      Comment(
-        id: 'comment0',
-        authorUid: 'user1',
-        content: 'Lorem cmm chứ lorem',
-        upvoteCount: 1,
-        downvoteCount: 1,
-        postedTime: '2019-12-26T01:45:01+0700',
-        upvoters: [ 'user1' ],
-        downvoters: [ 'user2' ],
-      ),
-      Comment(
-        id: 'comment1',
-        authorUid: 'user2',
-        content: 'Nói hay lắm bạn tôi',
-        upvoteCount: 1,
-        downvoteCount: 0,
-        postedTime: '2019-12-26T01:38:01+0700',
-        upvoters: [ 'user1' ],
-        downvoters: [],
-      ),
-      Comment(
-        id: 'comment2',
-        authorUid: 'user2',
-        content: 'CHXHCNVNMN!',
-        upvoteCount: 0,
-        downvoteCount: 1,
-        postedTime: '2019-12-26T01:37:01+0700',
-        upvoters: [],
-        downvoters: [ 'user1' ],
-      ),
-    ]
-  ),
-  Post(
-    id: 'post1',
-    title: 'Alo alo đâu rồi những con chó Hitler, Stalin?? Đm chúng m đâu',
-    authorUid: 'user1',
-    topicId: 'topic1',
-    content: '',
-    upvoteCount: 1,
-    downvoteCount: 1,
-    postedTime: '2019-12-26T13:35:01+0700',
-    upvoters: [ 'user0' ],
-    downvoters: [ 'user1' ],
-    commentCount: 15,
-    comments: [],
-  ),
-  Post(
-    id: 'post2',
-    title: 'warning: The dev dependency on flutter_launcher_icons is unnecessary because there is also a normal dependency on that package. (unnecessary_dev_dependency at [bilinguo_flutter] pubspec.yaml:33)',
-    authorUid: 'user2',
-    topicId: 'topic3',
-    content: '',
-    upvoteCount: 1,
-    downvoteCount: 1,
-    postedTime: '2019-12-24T13:35:01+0700',
-    upvoters: [ 'user2' ],
-    downvoters: [ 'user0' ],
-    commentCount: 5,
-    comments: [],
-  ),
-];
+// List<Post> mockPosts = [
+//   Post(
+//     id: 'post0',
+//     title: 'Lorem ipsum dolor sit amet, cons adipiscing elit...',
+//     authorUid: 'user0',
+//     topicId: 'topic2',
+//     content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+//     upvoteCount: 1,
+//     downvoteCount: 1,
+//     postedTime: '2019-12-26T01:35:01+0700',
+//     upvoters: [ 'user1' ],
+//     downvoters: [ 'user2' ],
+//     commentCount: 3,
+//     comments: [
+//       Comment(
+//         id: 'comment0',
+//         authorUid: 'user1',
+//         content: 'Lorem cmm chứ lorem',
+//         upvoteCount: 1,
+//         downvoteCount: 1,
+//         postedTime: '2019-12-26T01:45:01+0700',
+//         upvoters: [ 'user1' ],
+//         downvoters: [ 'user2' ],
+//       ),
+//       Comment(
+//         id: 'comment1',
+//         authorUid: 'user2',
+//         content: 'Nói hay lắm bạn tôi',
+//         upvoteCount: 1,
+//         downvoteCount: 0,
+//         postedTime: '2019-12-26T01:38:01+0700',
+//         upvoters: [ 'user1' ],
+//         downvoters: [],
+//       ),
+//       Comment(
+//         id: 'comment2',
+//         authorUid: 'user2',
+//         content: 'CHXHCNVNMN!',
+//         upvoteCount: 0,
+//         downvoteCount: 1,
+//         postedTime: '2019-12-26T01:37:01+0700',
+//         upvoters: [],
+//         downvoters: [ 'user1' ],
+//       ),
+//     ]
+//   ),
+//   Post(
+//     id: 'post1',
+//     title: 'Alo alo đâu rồi những con chó Hitler, Stalin?? Đm chúng m đâu',
+//     authorUid: 'user1',
+//     topicId: 'topic1',
+//     content: '',
+//     upvoteCount: 1,
+//     downvoteCount: 1,
+//     postedTime: '2019-12-26T13:35:01+0700',
+//     upvoters: [ 'user0' ],
+//     downvoters: [ 'user1' ],
+//     commentCount: 15,
+//     comments: [],
+//   ),
+//   Post(
+//     id: 'post2',
+//     title: 'warning: The dev dependency on flutter_launcher_icons is unnecessary because there is also a normal dependency on that package. (unnecessary_dev_dependency at [bilinguo_flutter] pubspec.yaml:33)',
+//     authorUid: 'user2',
+//     topicId: 'topic3',
+//     content: '',
+//     upvoteCount: 1,
+//     downvoteCount: 1,
+//     postedTime: '2019-12-24T13:35:01+0700',
+//     upvoters: [ 'user2' ],
+//     downvoters: [ 'user0' ],
+//     commentCount: 5,
+//     comments: [],
+//   ),
+// ];
 
-User currentUser = User(uid: 'user1', displayName: 'Milos-san', profilePicture: 'mock-users/ricardo.jpg');
+User currentUser = User(uid: 'rayhTEOySpeJK1914j8Z0Oas9Yl1', displayName: 'Thinh Nguyen', profilePicture: 'mock-users/ricardo.jpg', email: '16521178@gm.uit.edu.vn');
