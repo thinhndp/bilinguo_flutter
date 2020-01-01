@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import './utils/HexColor.dart';
-import 'mock-data.dart';
+// import 'mock-data.dart';
 import 'utils/HexColor.dart';
 import './models/Post.dart';
 import './models/Topic.dart';
+import './models/User.dart';
 import './utils/Helper.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
 
 class ForumWidget extends StatefulWidget {
-  const ForumWidget({ this.onPostTap });
+  const ForumWidget({ this.onPostTap, this.viewModel });
   final ForumPostCallback onPostTap;
+  final ViewModel viewModel;
   
   @override
   _ForumWidgetState createState() => _ForumWidgetState();
@@ -19,11 +24,13 @@ class _ForumWidgetState extends State<ForumWidget> {
   List<Post> _posts;
   List<Topic> _topics;
   List<bool> _isUpdatingVote;
+  User _currentUser;
 
   @override
   void initState() {
     super.initState();
     _chosenTopicId = '';
+    _currentUser = widget.viewModel.currentUser;
 
     Topic.fetchTopics().then((topics) {
       setState(() {
@@ -80,20 +87,20 @@ class _ForumWidgetState extends State<ForumWidget> {
     var posts = _posts;
     if (type == 'upvote') {
       if (_isPostUpvotedByCurrentUser(post)) {
-        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
+        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
       }
       else {
-        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
-        posts[postIndex].upvoters.add(currentUser.email);
+        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
+        posts[postIndex].upvoters.add(_currentUser.email);
       }
     }
     else if (type == 'downvote') {
       if (_isPostDownvotedByCurrentUser(post)) {
-        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
+        posts[postIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
       }
       else {
-        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
-        posts[postIndex].downvoters.add(currentUser.email);
+        posts[postIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
+        posts[postIndex].downvoters.add(_currentUser.email);
       }
     }
     posts[postIndex].upvoteCount = posts[postIndex].upvoters.length;
@@ -103,7 +110,7 @@ class _ForumWidgetState extends State<ForumWidget> {
     });
     print(postIndex);
 
-    Post.votePost(currentUser.email, post.id, type)
+    Post.votePost(_currentUser.email, post.id, type)
     .then((res) {
       Post.getPostWithoutComments(post.id)
       .then((post) {
@@ -241,10 +248,10 @@ class _ForumWidgetState extends State<ForumWidget> {
   }
 
   _isPostUpvotedByCurrentUser(post) {
-    return post.upvoters.contains(currentUser.email);
+    return post.upvoters.contains(_currentUser.email);
   }
   _isPostDownvotedByCurrentUser(post) {
-    return post.downvoters.contains(currentUser.email);
+    return post.downvoters.contains(_currentUser.email);
   }
 
   Widget _buildPost(post) {
@@ -492,8 +499,7 @@ class ForumHomeScreen extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody(viewModel) {
     return Column(
         children: <Widget>[
           _buildHeader(),
@@ -503,7 +509,8 @@ class ForumHomeScreen extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   ForumWidget(
-                    onPostTap: onPostTap
+                    onPostTap: onPostTap,
+                    viewModel: viewModel
                   ),
                   Container(
                     alignment: AlignmentDirectional.bottomEnd,
@@ -520,6 +527,14 @@ class ForumHomeScreen extends StatelessWidget {
           ),
         ],
       );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector(
+      converter: (Store<AppState> store) => ViewModel.create(store),
+      builder: (context, ViewModel viewModel) => _buildBody(viewModel)
+    );
   }
 }
 
