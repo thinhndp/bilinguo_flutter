@@ -30,6 +30,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   var _questionsTotal = 5;
   DateTime _testDateTime = new DateTime(2019, 9, 22);
 
+  // vie-eng-vocab-picking
+  List<dynamic> _vocabChoices = [];
+  int _selectedVocabIndex = -1;
+
   // eng-vie-sentence-picking
   List<dynamic> _sentenceChoices = [];
   int _selectedSentenceIndex = -1;
@@ -94,6 +98,13 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
       _question = questionData;
     });
 
+    if (questionData['type'] == 'vie-eng-vocab-picking') {
+      setState(() {
+        _vocabChoices = questionData['choices'];
+        _selectedVocabIndex = -1;
+      });
+    }
+
     if (questionData['type'] == 'eng-vie-sentence-picking') {
       setState(() {
         _sentenceChoices = questionData['choices'];
@@ -112,6 +123,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
   _checkAnswer() {
     var answer = '';
+
+    if (_question['type'] == 'vie-eng-vocab-picking') {
+      answer = _vocabChoices[_selectedVocabIndex]['text'];
+    }
 
     if (_question['type'] == 'eng-vie-sentence-picking') {
       answer = _sentenceChoices[_selectedSentenceIndex].toString();
@@ -168,88 +183,6 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
           _isLoadingCheckButton = false;
         });
       });
-  }
-
-  Widget _renderSelectingWordPiece(int wordChoiceIndex) {
-    return GestureDetector(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 2),
-            left: BorderSide(color: Colors.grey, width: 2),
-            right: BorderSide(color: Colors.grey, width: 2),
-            bottom: BorderSide(color: Colors.grey, width: 4),
-          ),
-          // borderRadius: BorderRadius.circular(10),
-        ),
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(10),
-        child: Text(_wordChoices[wordChoiceIndex], style: TextStyle(color: Colors.black87)),
-      ),
-      onTap: () {
-        final newList = _selectedIndexList;
-        newList.remove(wordChoiceIndex);
-        setState(() {
-          _selectedIndexList = newList;
-        });
-      },
-    );
-  }
-
-  List<Widget> _renderSelectingWordPieces() {
-    List<Widget> widgetList = new List<Widget>();
-
-    for (var i = 0; i < _selectedIndexList.length; i++) {
-      widgetList.add(_renderSelectingWordPiece(_selectedIndexList[i]));
-    }
-
-    return widgetList;
-  }
-
-  Widget _renderChoiceWordPiece(String word, int index) {
-    return GestureDetector(
-      child: Container(
-        decoration: BoxDecoration(
-          color: _selectedIndexList.contains(index) ? Colors.grey : Colors.transparent,
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 2),
-            left: BorderSide(color: Colors.grey, width: 2),
-            right: BorderSide(color: Colors.grey, width: 2),
-            bottom: BorderSide(color: Colors.grey, width: 4),
-          ),
-          // borderRadius: BorderRadius.circular(10),
-        ),
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(10),
-        child: Text(
-          word,
-          style: TextStyle(color: _selectedIndexList.contains(index) ? Colors.grey : Colors.black87)
-        ),
-      ),
-      onTap: () {
-        if (!_selectedIndexList.contains(index)) {
-          final newList = _selectedIndexList;
-          newList.add(index);
-          setState(() {
-            _selectedIndexList = newList;
-          });
-        }
-      },
-    );
-  }
-
-  List<Widget> _renderChoiceWordPieces() {
-    // return _wordChoices.map<Widget>((wordChoice) {
-    //   return _renderChoiceWordPiece(wordChoice);
-    // }).toList();
-
-    List<Widget> widgetList = new List<Widget>();
-
-    for (var i = 0; i < _wordChoices.length; i++) {
-      widgetList.add(_renderChoiceWordPiece(_wordChoices[i], i));
-    }
-
-    return widgetList;
   }
 
   void _showSummary() {
@@ -389,6 +322,64 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     );
   }
 
+  // vie-eng-vocab-picking
+  List<Widget> _renderVocabChoices() {
+    List<Widget> widgetList = [];
+
+    for (var i = 0; i < _vocabChoices.length; i++) {
+      final isSelected = (i == _selectedVocabIndex);
+
+      final illustration = _vocabChoices[i]['illustration'];
+      final text = _vocabChoices[i]['text'];
+
+      widgetList.add(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedVocabIndex = i;
+            });
+          },
+          child: Container(
+            height: 150,
+            width: 125,
+            margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.lightBlue[100] : Colors.white,
+              border: Border.all(
+                color: isSelected ? Colors.blue : Colors.grey[400], width: 2
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: isSelected ? Colors.blue : Colors.grey[400],
+                  offset: Offset(0, 2),
+                )
+              ]
+            ),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: Image.asset(
+                    'assets/exercise-images/' + illustration,
+                    width: 75,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(text),
+                )
+              ],
+            ),
+          ),
+        )
+      );
+    }
+
+    return widgetList;
+  }
+
+  // eng-vie-sentence-picking
   List<Widget> _renderSentenceChoices() {
     List<Widget> widgetList = [];
 
@@ -435,8 +426,102 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
     return widgetList;
   }
+  
+  // eng-vie-sentence-ordering
+  Widget _renderSelectingWordPiece(int wordChoiceIndex) {
+    return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Colors.grey, width: 2),
+            left: BorderSide(color: Colors.grey, width: 2),
+            right: BorderSide(color: Colors.grey, width: 2),
+            bottom: BorderSide(color: Colors.grey, width: 4),
+          ),
+          // borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.all(5),
+        padding: EdgeInsets.all(10),
+        child: Text(_wordChoices[wordChoiceIndex], style: TextStyle(color: Colors.black87)),
+      ),
+      onTap: () {
+        final newList = _selectedIndexList;
+        newList.remove(wordChoiceIndex);
+        setState(() {
+          _selectedIndexList = newList;
+        });
+      },
+    );
+  }
+
+  List<Widget> _renderSelectingWordPieces() {
+    List<Widget> widgetList = new List<Widget>();
+
+    for (var i = 0; i < _selectedIndexList.length; i++) {
+      widgetList.add(_renderSelectingWordPiece(_selectedIndexList[i]));
+    }
+
+    return widgetList;
+  }
+
+  Widget _renderChoiceWordPiece(String word, int index) {
+    return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+          color: _selectedIndexList.contains(index) ? Colors.grey : Colors.transparent,
+          border: Border(
+            top: BorderSide(color: Colors.grey, width: 2),
+            left: BorderSide(color: Colors.grey, width: 2),
+            right: BorderSide(color: Colors.grey, width: 2),
+            bottom: BorderSide(color: Colors.grey, width: 4),
+          ),
+          // borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.all(5),
+        padding: EdgeInsets.all(10),
+        child: Text(
+          word,
+          style: TextStyle(color: _selectedIndexList.contains(index) ? Colors.grey : Colors.black87)
+        ),
+      ),
+      onTap: () {
+        if (!_selectedIndexList.contains(index)) {
+          final newList = _selectedIndexList;
+          newList.add(index);
+          setState(() {
+            _selectedIndexList = newList;
+          });
+        }
+      },
+    );
+  }
+
+  List<Widget> _renderChoiceWordPieces() {
+    // return _wordChoices.map<Widget>((wordChoice) {
+    //   return _renderChoiceWordPiece(wordChoice);
+    // }).toList();
+
+    List<Widget> widgetList = new List<Widget>();
+
+    for (var i = 0; i < _wordChoices.length; i++) {
+      widgetList.add(_renderChoiceWordPiece(_wordChoices[i], i));
+    }
+
+    return widgetList;
+  }
 
   Widget _buildContent() {
+    if (_question['type'] == 'vie-eng-vocab-picking') {
+      return Center(
+        child: Wrap(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          alignment: WrapAlignment.center,
+          children: _renderVocabChoices(),
+        )
+      );
+    }
+
     if (_question['type'] == 'eng-vie-sentence-picking') {
       return Column(
         children: _renderSentenceChoices(),
@@ -609,9 +694,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Container(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                   child: _buildHeader(),
@@ -622,7 +708,9 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
                 child: Container(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: _isLoadingContent == false ?
-                    _buildContent()
+                    Center(
+                      child: _buildContent()
+                    )
                     :
                     Center(
                       child: CircularProgressIndicator()
