@@ -60,10 +60,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // }
         setState(() {
           // _uploadedFileURL = fileURL;
-          // _currentUser = updatedUser;
-          _currentUser = widget.viewModel.currentUser;
+          _currentUser = updatedUser;
+          // _currentUser = widget.viewModel.currentUser;
           _isUpdatingUserInfo = false;
         });
+        
       })
       .catchError((err) {
         print(err);

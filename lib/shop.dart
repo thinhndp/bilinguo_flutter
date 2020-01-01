@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import './models/ItemGroup.dart';
+import './models/Item.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
+import './models/User.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 // import 'mock-data.dart';
 
 class ShopWidget extends StatefulWidget {
+  ShopWidget({ this.viewModel });
+  final ViewModel viewModel;
+
   @override
   _ShopWidgetState createState() => _ShopWidgetState();
 }
 
 class _ShopWidgetState extends State<ShopWidget> {
   List<ItemGroup> _itemGroups;
+  User _currentUser;
+  bool _isBuyingItem = false;
 
   @override
   void initState() {
+    _currentUser = widget.viewModel.currentUser;
+    _isBuyingItem = false;
     ItemGroup.fetchItemGroups().then((itemGroups) {
       setState(() {
         _itemGroups = itemGroups;
@@ -22,8 +34,35 @@ class _ShopWidgetState extends State<ShopWidget> {
     });
   }
 
+  void _handleBuyItem(item) {
+    if (_currentUser == null || _currentUser.fortune < item.price) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Có đủ tiền đâu mà mua'),
+        backgroundColor: Color(0xffff4444),
+      ));
+      return;
+    }
+    setState(() {
+      _isBuyingItem = true;
+    });
+    Item.buyItem(widget.viewModel, item)
+    .then((updatedUser) {
+      setState(() {
+        _currentUser = updatedUser;
+        _isBuyingItem = false;
+      });
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Mua vật phẩm thành công!'),
+        backgroundColor: Color(0xff00C851),
+      ));
+    })
+    .catchError((err) {
+      print(err);
+    });
+  }
+
   void _showDialog(item) {
-    // flutter defined function
+    Scaffold.of(context).hideCurrentSnackBar();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -97,6 +136,7 @@ class _ShopWidgetState extends State<ShopWidget> {
               onPressed: () {
                 // TODO: Implement this shit
                 Navigator.of(context).pop();
+                _handleBuyItem(item);
               },
             ),
           ],
@@ -329,7 +369,7 @@ class _ShopWidgetState extends State<ShopWidget> {
                               height: 24,
                             ),
                             SizedBox(width: 5),
-                            Text('68',
+                            Text((_currentUser != null) ? _currentUser.fortune.toString() : '',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -341,6 +381,19 @@ class _ShopWidgetState extends State<ShopWidget> {
               )
             ],
           ),
+          if (_isBuyingItem) (
+            Stack(
+              children: <Widget>[
+                Opacity(
+                  opacity: 0.6,
+                  child: ModalBarrier(dismissible: false, color: Colors.white),
+                ),
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ],
+            )
+          ),
         ],
       ),
     );
@@ -350,6 +403,10 @@ class _ShopWidgetState extends State<ShopWidget> {
 class ShopScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ShopWidget();
+    // return ShopWidget();
+    return StoreConnector(
+      converter: (Store<AppState> store) => ViewModel.create(store),
+      builder: (context, ViewModel viewModel) => ShopWidget(viewModel: viewModel)
+    );
   }
 }

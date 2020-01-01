@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import './utils/HexColor.dart';
-import './mock-data.dart';
+// import './mock-data.dart';
 import './models/Topic.dart';
 import './models/Post.dart';
-import 'package:uuid/uuid.dart';
+import './models/User.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
 
 class ForumNewPostWidget extends StatefulWidget {
-  const ForumNewPostWidget({this.onPosted});
+  const ForumNewPostWidget({this.onPosted, this.viewModel});
   final VoidCallback onPosted;
+  final ViewModel viewModel;
 
   @override
   _ForumNewPostWidgetState createState() => _ForumNewPostWidgetState();
@@ -19,11 +23,13 @@ class _ForumNewPostWidgetState extends State<ForumNewPostWidget> {
   final postTitleController = TextEditingController();
   final postContentController = TextEditingController();
   bool _isPosting = false;
+  User _currentUser;
 
   @override
   void initState() {
     super.initState();
-    // _topics = mockTopics; //TODO: API GET
+    _currentUser = widget.viewModel.currentUser;
+
     Topic.fetchTopics().then((topics) {
       setState(() {
         _topics = topics;
@@ -63,7 +69,7 @@ class _ForumNewPostWidgetState extends State<ForumNewPostWidget> {
         _isPosting = true;
       });
       Post.postNewPost(
-              currentUser.email,
+              _currentUser.email,
               _chosenTopicId,
               postTitleController.text.trim(),
               postContentController.text.trim())
@@ -326,20 +332,30 @@ class ForumNewPostScreen extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody(viewModel) {
     return Column(
       children: <Widget>[
         _buildHeader(),
         // ForumWidget(),
         Expanded(
-          child: ForumNewPostWidget(onPosted: () => backToForumHome()),
+          child: ForumNewPostWidget(
+            onPosted: () => backToForumHome(),
+            viewModel: viewModel
+          ),
         ),
         // Container(
         //   padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
         //   child: ForumNewPostWidget(),
         // ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector(
+      converter: (Store<AppState> store) => ViewModel.create(store),
+      builder: (context, ViewModel viewModel) => _buildBody(viewModel)
     );
   }
 }

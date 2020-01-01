@@ -3,8 +3,10 @@ import './utils/HexColor.dart';
 import './models/Post.dart';
 import './models/User.dart';
 import './models/Comment.dart';
-import './mock-data.dart';
 import './utils/Helper.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
 
 //user when loading not done. Won't show
 User dummyUser = User(
@@ -15,8 +17,9 @@ User dummyUser = User(
 );
 
 class ForumPostWidget extends StatefulWidget {
-  const ForumPostWidget({ this.post });
+  const ForumPostWidget({ this.post, this.viewModel });
   final Post post;
+  final ViewModel viewModel;
 
   @override
   _ForumPostWidgetState createState() => _ForumPostWidgetState();
@@ -28,6 +31,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   bool _isUpdatingPostVote = false;
   List<bool> _isUpdatingCommentVote;
   bool _isPosting = false;
+  User _currentUser;
 
   final commentController = TextEditingController();
 
@@ -36,6 +40,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     super.initState();
     _isUpdatingPostVote = false;
     _isPosting = false;
+    _currentUser = widget.viewModel.currentUser;
     // _post = widget.post;
     Post.getPostWithoutComments(widget.post.id)
     .then((post) {
@@ -73,11 +78,11 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
   }
 
   _isPostUpvotedByCurrentUser(post) {
-    return post.upvoters.contains(currentUser.email);
+    return post.upvoters.contains(_currentUser.email);
   }
   _isPostDownvotedByCurrentUser(post) {
 
-    return post.downvoters.contains(currentUser.email);
+    return post.downvoters.contains(_currentUser.email);
   }
 
   _handlePostNewComment(context) {
@@ -88,7 +93,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     setState(() {
       _isPosting = true;
     });
-    Comment.postNewComment(_post.id, currentUser.email, commentController.text.trim())
+    Comment.postNewComment(_post.id, _currentUser.email, commentController.text.trim())
     .then((res) {
       Comment.fetchPostComments(_post.id)
       .then((comments) {
@@ -220,20 +225,20 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     var post = _post;
     if (type == 'upvote') {
       if (_isPostUpvotedByCurrentUser(post)) {
-        post.upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
+        post.upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
       }
       else {
-        post.downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
-        post.upvoters.add(currentUser.email);
+        post.downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
+        post.upvoters.add(_currentUser.email);
       }
     }
     else if (type == 'downvote') {
       if (_isPostDownvotedByCurrentUser(post)) {
-        post.downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
+        post.downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
       }
       else {
-        post.upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
-        post.downvoters.add(currentUser.email);
+        post.upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
+        post.downvoters.add(_currentUser.email);
       }
     }
     post.upvoteCount = post.upvoters.length;
@@ -242,7 +247,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
       _post = post;
     });
 
-    Post.votePost(currentUser.email, post.id, type)
+    Post.votePost(_currentUser.email, post.id, type)
     .then((res) {
       Post.getPostWithoutComments(post.id)
       .then((p) {
@@ -272,20 +277,20 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     var comments = _comments;
     if (type == 'upvote') {
       if (_isPostUpvotedByCurrentUser(comment)) {
-        comments[commentIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
+        comments[commentIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
       }
       else {
-        comments[commentIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
-        comments[commentIndex].upvoters.add(currentUser.email);
+        comments[commentIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
+        comments[commentIndex].upvoters.add(_currentUser.email);
       }
     }
     else if (type == 'downvote') {
       if (_isPostDownvotedByCurrentUser(comment)) {
-        comments[commentIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == currentUser.email);
+        comments[commentIndex].downvoters.removeWhere((downvoterEmail) => downvoterEmail == _currentUser.email);
       }
       else {
-        comments[commentIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == currentUser.email);
-        comments[commentIndex].downvoters.add(currentUser.email);
+        comments[commentIndex].upvoters.removeWhere((upvoterEmail) => upvoterEmail == _currentUser.email);
+        comments[commentIndex].downvoters.add(_currentUser.email);
       }
     }
     comments[commentIndex].upvoteCount = comments[commentIndex].upvoters.length;
@@ -295,7 +300,7 @@ class _ForumPostWidgetState extends State<ForumPostWidget> {
     });
     // print(commentIndex);
 
-    Comment.voteComment(currentUser.email, _post.id, comment.id, type)
+    Comment.voteComment(_currentUser.email, _post.id, comment.id, type)
     .then((res) {
       Comment.getComment(_post.id, comment.id)
       .then((comment) {
@@ -696,8 +701,7 @@ class ForumPostScreen extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody(viewModel) {
     return Container(
       color: Color(0xffD0F5FF),
       child: Column(
@@ -709,11 +713,20 @@ class ForumPostScreen extends StatelessWidget {
               // padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
               child: ForumPostWidget(
                 post: post,
+                viewModel: viewModel
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector(
+      converter: (Store<AppState> store) => ViewModel.create(store),
+      builder: (context, ViewModel viewModel) => _buildBody(viewModel)
     );
   }
 }
