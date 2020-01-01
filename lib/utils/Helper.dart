@@ -21,4 +21,8 @@ class Helper {
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
+
+  static String capitalizeString(String string) {
+    return '${string[0].toUpperCase()}${string.substring(1)}';
+  }
 }
