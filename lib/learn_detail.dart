@@ -24,11 +24,15 @@ class LearnDetailScreen extends StatefulWidget {
 class _LearnDetailScreenState extends State<LearnDetailScreen> {
   bool _isLoadingContent = false;
   bool _isLoadingCheckButton = false;
-  var _question = null; // TODO: create class
+  var _question; // TODO: create class
   var _questionsAnswered = 0;
-  var _questionsAnsweredCorrect = 0;
+  // var _questionsAnsweredCorrect = 0;
   var _questionsTotal = 5;
   DateTime _testDateTime = new DateTime(2019, 9, 22);
+
+  // eng-vie-sentence-picking
+  List<dynamic> _sentenceChoices = [];
+  int _selectedSentenceIndex = -1;
 
   // eng-vie-sentence-ordering
   List<dynamic> _wordChoices = [];
@@ -48,34 +52,6 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
   _initQuestion() {
     print('_initQuestion');
-    // widget._viewModel.currentUser.getIdToken()
-    //   .then((tokenRes) {
-
-    //     print('get duoc token');
-    //     http.post(
-    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/setQuestionOfCurrentLearnSession',
-    //       headers: { 'Authorization': 'Bearer ' + tokenRes.token },
-    //     )
-    //       .then((response) {
-    //         print('complete');
-    //         final learnSession = json.decode(response.body);
-    //         print(learnSession);
-    //         setState(() {
-    //           _questionsAnswered = learnSession['questionsAnswered'];
-    //           _questionsAnsweredCorrect = learnSession['questionsAnsweredCorrect'];
-    //           _questionsTotal = learnSession['questionsTotal'];
-    //         });
-    //         _setQuestion(learnSession['question']);
-    //       })
-    //       .catchError((err) {
-    //         print('error');
-    //         print(err);
-    //       });
-    //   })
-    //   .catchError((err) {
-    //     print('error');
-    //     print(err);
-    //   });
 
     setState(() {
       _isLoadingContent = true;
@@ -90,8 +66,9 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
         final learnSession = json.decode(response.body);
         print(learnSession);
         setState(() {
+          _answerStatus = 'unchecked';
+          _correctAnswer = '';
           _questionsAnswered = learnSession['questionsAnswered'];
-          _questionsAnsweredCorrect = learnSession['questionsAnsweredCorrect'];
           _questionsTotal = learnSession['questionsTotal'];
         });
         _setQuestion(learnSession['question']);
@@ -112,18 +89,33 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
   _setQuestion(questionData) {
     print(questionData);
+
     setState(() {
       _question = questionData;
-      _answerStatus = 'unchecked';
-      _correctAnswer = '';
-      _wordChoices = _question['choices'];
-      _selectedIndexList = [];
     });
+
+    if (questionData['type'] == 'eng-vie-sentence-picking') {
+      setState(() {
+        _sentenceChoices = questionData['choices'];
+        _selectedSentenceIndex = -1;
+      });
+    }
+
+    if (questionData['type'] == 'eng-vie-sentence-ordering') {
+      setState(() {
+        _wordChoices = questionData['choices'];
+        _selectedIndexList = [];
+      });
+    }
     
   }
 
   _checkAnswer() {
     var answer = '';
+
+    if (_question['type'] == 'eng-vie-sentence-picking') {
+      answer = _sentenceChoices[_selectedSentenceIndex].toString();
+    }
 
     if (_question['type'] == 'eng-vie-sentence-ordering') {
       final selectedWords = _selectedIndexList.map((selectedIndex) {
@@ -148,8 +140,8 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
         final responseJSON = json.decode(response.body);
         print(responseJSON);
         setState(() {
-          // _isDone = responseJSON['isDone'];
-          _isDone = true;
+          _isDone = responseJSON['isDone'];
+          // _isDone = true;
         });
         if (responseJSON['isCorrect'] == true) {
           setState(() {
@@ -397,29 +389,86 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     );
   }
 
+  List<Widget> _renderSentenceChoices() {
+    List<Widget> widgetList = [];
+
+    for (var i = 0; i < _sentenceChoices.length; i++) {
+      final isSelected = (i == _selectedSentenceIndex);
+
+      widgetList.add(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedSentenceIndex = i;
+            });
+          },
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(15),
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.lightBlue[100] : Colors.white,
+              border: Border.all(
+                color: isSelected ? Colors.blue : Colors.grey[400], width: 2
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: isSelected ? Colors.blue : Colors.grey[400],
+                  offset: Offset(0, 2),
+                )
+              ]
+            ),
+            child: Center(
+              child: Text(
+                Helper.capitalizeString(_sentenceChoices[i].toString()),
+                style: TextStyle(
+                  color: isSelected ? Colors.blue : Colors.grey[800],
+                  fontSize: 16,
+                ),
+              )
+            ),
+          ),
+        )
+      );
+    }
+
+    return widgetList;
+  }
+
   Widget _buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(bottom: 15),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(width: 2, color: Colors.grey[400]))
+    if (_question['type'] == 'eng-vie-sentence-picking') {
+      return Column(
+        children: _renderSentenceChoices(),
+      );
+    }
+
+    if (_question['type'] == 'eng-vie-sentence-ordering') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(bottom: 15),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(width: 2, color: Colors.grey[400]))
+            ),
+            child: Wrap(
+              children: _renderSelectingWordPieces(),
+            )
           ),
-          child: Wrap(
-            children: _renderSelectingWordPieces(),
-          )
-        ),
-        SizedBox(height: 25,),
-        Center(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: _renderChoiceWordPieces(),
+          SizedBox(height: 25,),
+          Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              children: _renderChoiceWordPieces(),
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
+
+    return SizedBox(width: 0, height: 0,);
   }
 
   Color _getCheckSectionColor() {
