@@ -1,3 +1,4 @@
+import 'package:bilinguo_flutter/common_widgets/my_button.dart';
 import 'package:bilinguo_flutter/models/Achievement.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
 import 'package:bilinguo_flutter/utils/Helper.dart';
@@ -21,6 +22,8 @@ class LearnDetailScreen extends StatefulWidget {
 }
 
 class _LearnDetailScreenState extends State<LearnDetailScreen> {
+  bool _isLoadingContent = false;
+  bool _isLoadingCheckButton = false;
   var _question = null; // TODO: create class
   var _questionsAnswered = 0;
   var _questionsAnsweredCorrect = 0;
@@ -74,6 +77,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     //     print(err);
     //   });
 
+    setState(() {
+      _isLoadingContent = true;
+    });
+
     http.post(
       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/setQuestionOfCurrentLearnSession',
       headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
@@ -88,10 +95,18 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
           _questionsTotal = learnSession['questionsTotal'];
         });
         _setQuestion(learnSession['question']);
+
+        setState(() {
+          _isLoadingContent = false;
+        });
       })
       .catchError((err) {
         print('error');
         print(err);
+        
+        setState(() {
+          _isLoadingContent = false;
+        });
       });
   }
 
@@ -119,44 +134,9 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
     print(answer);
 
-    // widget._viewModel.currentUser.getIdToken()
-    //   .then((tokenRes) {
-
-    //     http.post(
-    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/checkSessionQuestionAnswer',
-    //       headers: { 'Authorization': 'Bearer ' + tokenRes.token },
-    //       body: { 'answer': answer },
-    //     )
-    //       .then((response) {
-    //         print('complete');
-    //         final responseJSON = json.decode(response.body);
-    //         print(responseJSON);
-    //         setState(() {
-    //           // _isDone = responseJSON['isDone'];
-    //           _isDone = true;
-    //         });
-    //         if (responseJSON['isCorrect'] == true) {
-    //           setState(() {
-    //             _answerStatus = 'correct';
-    //           });
-    //         } else if (responseJSON['isCorrect'] == false) {
-    //           setState(() {
-    //             _answerStatus = 'incorrect';
-    //             _correctAnswer = responseJSON['correctAnswer'];
-    //           });
-    //         } else {
-    //           print('co gi do khong on');
-    //         }
-    //       })
-    //       .catchError((err) {
-    //         print('error');
-    //         print(err);
-    //       });
-    //   })
-    //   .catchError((err) {
-    //     print('error');
-    //     print(err);
-    //   });
+    setState(() {
+      _isLoadingCheckButton = true;
+    });
 
     http.post(
       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/checkSessionQuestionAnswer',
@@ -183,10 +163,18 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
         } else {
           print('co gi do khong on');
         }
+
+        setState(() {
+          _isLoadingCheckButton = false;
+        });
       })
       .catchError((err) {
         print('error');
         print(err);
+
+        setState(() {
+          _isLoadingCheckButton = false;
+        });
       });
   }
 
@@ -273,28 +261,9 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   }
 
   void _showSummary() {
-    // widget._viewModel.currentUser.getIdToken()
-    //   .then((tokenRes) {
-
-    //     http.get(
-    //       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getCurrentLearnSession',
-    //       headers: { 'Authorization': 'Bearer ' + widget._viewModel.currentUser.token },
-    //     )
-    //       .then((response) {
-    //         print('complete');
-    //         final responseJSON = json.decode(response.body);
-    //         print(responseJSON);
-    //         _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
-    //       })
-    //       .catchError((err) {
-    //         print('error');
-    //         print(err);
-    //       });
-    //   })
-    //   .catchError((err) {
-    //     print('error');
-    //     print(err);
-    //   });
+    setState(() {
+      _isLoadingCheckButton = true;
+    });
 
     http.get(
       'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getCurrentLearnSession',
@@ -304,11 +273,23 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
         print('complete');
         final responseJSON = json.decode(response.body);
         print(responseJSON);
-        _showSummaryDialog(responseJSON['questionsAnsweredCorrect'], responseJSON['questionsTotal'], DateTime.parse(responseJSON['startAt']));
+        _showSummaryDialog(
+          responseJSON['questionsAnsweredCorrect'],
+          responseJSON['questionsTotal'],
+          DateTime.parse(responseJSON['startAt'])
+        );
+
+        setState(() {
+          _isLoadingCheckButton = false;
+        });
       })
       .catchError((err) {
         print('error');
         print(err);
+        
+        setState(() {
+          _isLoadingCheckButton = false;
+        });
       });
   }
 
@@ -381,19 +362,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
                   ),
                 ],
               ),
-              // Text(
-              //   'Correct Answers: ' + questionsCorrect.toString() + '/' + questionsTotal.toString(),
-              //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-              // ),
-              // Text(
-              //   'Duration: ' + '00:14:39',
-              //   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-              // ),
             ],
           ),
-          // content: Text('Total Questions: ' + questionsTotal.toString()),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
+            // buttons at the bottom of the dialog
             new FlatButton(
               child: new Text('Back to Home'),
               onPressed: () {
@@ -462,15 +434,13 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     return Colors.transparent;
   }
 
-  Widget _renderCheckButton() {
+  Widget _renderCheckBtn() {
     if (_answerStatus == 'correct') {
-      return RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)
-        ),
-        elevation: 4,
-        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-        onPressed: () {
+      return MyButton(
+        btnColor: Colors.green[500],
+        textColor: Colors.white,
+        isLoading: _isLoadingCheckButton == true || _isLoadingContent == true,
+        onBtnPressed: () {
           if (_isDone == false) {
             // Start next question
             _initQuestion();
@@ -479,22 +449,18 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
             _showSummary();
           }
         },
-        color: Colors.green[500],
-        textColor: Colors.white,
         child: Text(
-            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-        ),
+          _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+        )
       );
     }
     if (_answerStatus == 'incorrect') {
-      return RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)
-        ),
-        elevation: 4,
-        padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-        onPressed: () {
+      return MyButton(
+        btnColor: Colors.red,
+        textColor: Colors.white,
+        isLoading: _isLoadingCheckButton == true || _isLoadingContent == true,
+        onBtnPressed: () {
           if (_isDone == false) {
             // Start next question
             _initQuestion();
@@ -503,30 +469,24 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
             _showSummary();
           }
         },
-        color: Colors.red,
-        textColor: Colors.white,
         child: Text(
-            _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-        ),
+          _isDone == false ? 'TIẾP TỤC' : 'KẾT THÚC',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+        )
       );
     }
 
-    return RaisedButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0)
-      ),
-      elevation: 4,
-      padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-      onPressed: () {
+    return MyButton(
+      btnColor: Colors.green[400],
+      textColor: Colors.white,
+      isLoading: _isLoadingCheckButton == true || _isLoadingContent == true,
+      onBtnPressed: () {
         _checkAnswer();
       },
-      color: Colors.green[400],
-      textColor: Colors.white,
       child: Text(
-          'KIỂM TRA',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-      ),
+        'KIỂM TRA',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+      )
     );
   }
 
@@ -560,11 +520,6 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Container(
-        //   padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-        //   width: double.infinity,
-        //   child: _renderCheckButton(),
-        // ),
         Expanded(
           child: Container(
             width: double.infinity,
@@ -577,7 +532,7 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
                 Container(
                   // padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                   width: double.infinity,
-                  child: _renderCheckButton(),
+                  child: _renderCheckBtn(),
                 ),
                 SizedBox(height: 16,),
                 _renderAnswerStatusText(),
@@ -617,7 +572,12 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
                 flex: 3,
                 child: Container(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: _buildContent(),
+                  child: _isLoadingContent == false ?
+                    _buildContent()
+                    :
+                    Center(
+                      child: CircularProgressIndicator()
+                    ),
                 ),
               ),
               Expanded(
