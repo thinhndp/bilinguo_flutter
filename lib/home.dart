@@ -3,6 +3,8 @@ import 'package:bilinguo_flutter/models/AppState.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'placeholder_widget.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 import 'achievement.dart';
 import 'learn.dart';
@@ -42,13 +44,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override void initState() {
     super.initState();
+    // print('-----');
+    // print(widget._viewModel.currentUser.email);
+    // print(widget._navigatorKey);
+    // print('-----');
 
     // Temp. TODO: Fix
     _children.add(LearnScreen(widget._navigatorKey));
     _children.add(AchievementScreen());
     _children.add(ForumScreen());
     _children.add(ShopScreen());
-    _children.add(ProfileScreen());
+    // _children.add(ProfileScreen(widget._viewModel));
+    _children.add(
+      StoreConnector(
+        converter: (Store<AppState> store) => ViewModel.create(store),
+        builder: (context, ViewModel viewModel) => ProfileScreen(viewModel)
+      )
+    );
 
     // _auth.currentUser()
     //   .then((currentUser) {

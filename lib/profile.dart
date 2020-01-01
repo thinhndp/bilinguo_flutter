@@ -1,12 +1,21 @@
 import 'dart:io';
+import 'package:bilinguo_flutter/mock-data.dart';
 import 'package:bilinguo_flutter/utils/HexColor.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as Path;
-import './mock-data.dart';
+// import './mock-data.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
+import './models/User.dart';
+import 'package:redux/redux.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final ViewModel viewModel;
+
+  ProfileScreen(this.viewModel);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -14,8 +23,16 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isEditingProfile = false;
   File _image;
-  String _uploadedFileURL;
+  // String _uploadedFileURL;
   bool _isUpdatingUserInfo = false;
+  User _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.viewModel);
+    _currentUser = widget.viewModel.currentUser;
+  }
 
   Future uploadFile() async {
     setState(() {
@@ -28,9 +45,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
-        _uploadedFileURL = fileURL;
-        _isUpdatingUserInfo = false;
+      User newUserInfo = User(
+        profilePicture: fileURL,
+      );
+      User.updateUserProfile(_currentUser.token, newUserInfo)
+      .then((updatedUser) {
+        // var oldImg = widget.viewModel.currentUser.profilePicture;
+        print(updatedUser.profilePicture);
+        print(widget.viewModel.currentUser.profilePicture);
+        widget.viewModel.onSetCurrentUser(updatedUser);
+        print(widget.viewModel.currentUser.profilePicture);
+        // while(oldImg == widget.viewModel.currentUser.profilePicture) {
+        //   Future.delayed(const Duration(milliseconds: 500), () {});
+        // }
+        setState(() {
+          // _uploadedFileURL = fileURL;
+          // _currentUser = updatedUser;
+          _currentUser = widget.viewModel.currentUser;
+          _isUpdatingUserInfo = false;
+        });
+      })
+      .catchError((err) {
+        print(err);
       });
     });
   }
@@ -60,11 +96,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             clearSelection() {
               setModalState(() {
                 _image = null;
-                _uploadedFileURL = null;
+                // _uploadedFileURL = null;
               });
               setState(() {
                 _image = null;
-                _uploadedFileURL = null;
+                // _uploadedFileURL = null;
               });
             }
 
@@ -317,130 +353,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _renderBody() {
-    // return (Expanded(
-    //   // height: double.infinity,
-    //   child: SingleChildScrollView(
-    //     padding: EdgeInsets.all(20),
-    //     // mainAxisSize: MainAxisSize.max,
-    //     // shrinkWrap: true,
-    //     child: Column(
-    //         mainAxisSize: MainAxisSize.max,
-    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //         crossAxisAlignment: CrossAxisAlignment.stretch,
-    //         children: <Widget>[
-    //           Column(
-    //             children: <Widget>[
-    //               Row(
-    //                 children: <Widget>[
-    //                   Text(
-    //                     "Hồ sơ của bạn",
-    //                     style:
-    //                         TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    //                   ),
-    //                 ],
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               CircleAvatar(
-    //                 radius: 40,
-    //                 backgroundImage: AssetImage("assets/globe.png"),
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               Row(
-    //                 children: <Widget>[
-    //                   Text(
-    //                     "Tên",
-    //                     style: TextStyle(fontSize: 20),
-    //                   ),
-    //                 ],
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               TextFormField(
-    //                 autofocus: false,
-    //                 enabled: false,
-    //                 initialValue: 'Ricardo Milos',
-    //                 decoration: InputDecoration(
-    //                   filled: true,
-    //                   fillColor: Color(0xffeeeeee),
-    //                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-    //                   border: OutlineInputBorder(
-    //                       borderRadius: BorderRadius.circular(16.0)),
-    //                 ),
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               Row(
-    //                 children: <Widget>[
-    //                   Text(
-    //                     "Username",
-    //                     style: TextStyle(fontSize: 20),
-    //                   ),
-    //                 ],
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               TextFormField(
-    //                 autofocus: false,
-    //                 enabled: false,
-    //                 initialValue: 'ricardo_milos',
-    //                 decoration: InputDecoration(
-    //                   filled: true,
-    //                   fillColor: Color(0xffeeeeee),
-    //                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-    //                   border: OutlineInputBorder(
-    //                       borderRadius: BorderRadius.circular(16.0)),
-    //                 ),
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               Row(
-    //                 children: <Widget>[
-    //                   Text(
-    //                     "Email",
-    //                     style: TextStyle(fontSize: 20),
-    //                   ),
-    //                 ],
-    //               ),
-    //               SizedBox(
-    //                 height: 10,
-    //               ),
-    //               TextFormField(
-    //                 enabled: false,
-    //                 autofocus: false,
-    //                 initialValue: 'ricardo_milos@gmail.com',
-    //                 decoration: InputDecoration(
-    //                   filled: true,
-    //                   fillColor: Color(0xffeeeeee),
-    //                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-    //                   border: OutlineInputBorder(
-    //                       borderRadius: BorderRadius.circular(16.0)),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //           //  SizedBox(height: 70,),
-    //           Column(
-    //             children: <Widget>[
-    //               _renderButtons(),
-    //             ],
-    //           ),
-    //         ],
-    //       ),
-    //   ),
-    // ));
     return (Expanded(
       // height: double.infinity,
       child: Stack(
         children: <Widget>[
-          Container(
+          SingleChildScrollView(
             padding: EdgeInsets.all(20),
             // mainAxisSize: MainAxisSize.max,
             // shrinkWrap: true,
@@ -449,8 +366,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Flexible(
-                  flex: 1,
+                Container(
+                  // flex: 1,
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -465,8 +382,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(
                         height: 10,
                       ),
-                      Flexible(
-                        flex: 1,
+                      Container(
+                        // flex: 1,
+                        // color: Colors.red,
+                        height: 146,
                         child: Stack(
                             // color: Colors.white,
                             // child: CircleAvatar(
@@ -481,14 +400,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       onTap: () {
                                         _showUploadFileModal();
                                       },
-                                      // borderRadius: BorderRadius.circular(100.0),
-                                      child: ClipOval(
-                                        child: Image.network(
-                                          currentUser.profilePicture,
-                                          // width: 100,
-                                          // height: 100,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      borderRadius: BorderRadius.circular(100.0),
+                                      // child: ClipOval(
+                                      //   child: Image.network(
+                                      //     _currentUser.profilePicture,
+                                      //     // width: 100,
+                                      //     // height: 100,
+                                      //     fit: BoxFit.cover,
+                                      //   ),
+                                      // ),
+                                      // child: Container(
+                                      //   width: 150,
+                                      //   height: 150,
+                                      //   child: ClipOval(
+                                      //   child: Image.network(
+                                      //     _currentUser.profilePicture,
+                                      //     fit: BoxFit.contain,
+                                      //     // width: 90.0,
+                                      //     // height: 90.0,
+                                      //   )
+                                      // ),
+                                      // ),
+                                      child: AspectRatio(
+                                        // width: 120,
+                                        // height: 120,
+                                        aspectRatio: 1 / 1,
+                                        child: CircleAvatar(
+                                          minRadius: 10,
+                                          maxRadius: 70,
+                                          backgroundImage:
+                                              NetworkImage(_currentUser.profilePicture),
+                                          backgroundColor: Colors.transparent,
+                                        )
                                       ),
                                     ),
                                     Positioned(
@@ -510,14 +453,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     )
                                   ]
                                 : <Widget>[
-                                    ClipOval(
-                                      child: Image.network(
-                                        currentUser.profilePicture,
-                                        // width: 100,
-                                        // height: 100,
-                                        fit: BoxFit.cover,
+                                    // ClipOval(
+                                    //   child: Image.network(
+                                    //     _currentUser.profilePicture,
+                                    //     // width: 100,
+                                    //     // height: 100,
+                                    //     fit: BoxFit.cover,
+                                    //   ),
+                                    // ),
+                                    AspectRatio(
+                                        // width: 120,
+                                        // height: 120,
+                                        aspectRatio: 1 / 1,
+                                        child: CircleAvatar(
+                                          minRadius: 10,
+                                          maxRadius: 70,
+                                          backgroundImage:
+                                              NetworkImage(_currentUser.profilePicture),
+                                          backgroundColor: Colors.transparent,
+                                        )
                                       ),
-                                    ),
                                   ]),
                       ),
                       SizedBox(
@@ -545,7 +500,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextFormField(
                       autofocus: false,
                       enabled: false,
-                      initialValue: currentUser.displayName,
+                      initialValue: _currentUser.displayName,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffeeeeee),
@@ -574,7 +529,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextFormField(
                       autofocus: false,
                       enabled: false,
-                      initialValue: currentUser.displayName,
+                      initialValue: _currentUser.displayName,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffeeeeee),
@@ -603,7 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextFormField(
                       enabled: false,
                       autofocus: false,
-                      initialValue: currentUser.email,
+                      initialValue: _currentUser.email,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffeeeeee),
@@ -651,5 +606,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: <Widget>[_renderHeader(), _renderBody()],
       ),
     );
+    // return StoreConnector(
+    //   converter: (Store<AppState> store) => ViewModel.create(store),
+    //   builder: (context, ViewModel viewModel) => Container(
+    //     // color: Colors.red,
+    //     child: Column(
+    //       children: <Widget>[_renderHeader(), _renderBody()],
+    //     ),
+    //   ),
+    // );
   }
 }
