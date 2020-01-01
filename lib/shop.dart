@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:bilinguo_flutter/models/AppState.dart';
 import './models/User.dart';
+import './utils/HexColor.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 // import 'mock-data.dart';
 
@@ -24,6 +25,12 @@ class _ShopWidgetState extends State<ShopWidget> {
   @override
   void initState() {
     _currentUser = widget.viewModel.currentUser;
+    if (_currentUser.fortune == null) {
+      _currentUser.fortune = 0;
+    }
+    if (_currentUser.inventory == null) {
+      _currentUser.inventory = [];
+    }
     _isBuyingItem = false;
     ItemGroup.fetchItemGroups().then((itemGroups) {
       setState(() {
@@ -59,6 +66,132 @@ class _ShopWidgetState extends State<ShopWidget> {
     .catchError((err) {
       print(err);
     });
+  }
+
+  List<Item> getUserBoughtItems() {
+    List<Item> items = [];
+    List<Item> userItems = [];
+    _itemGroups.forEach((itemGroup) {
+      items = [ ...items, ...itemGroup.items ];
+    });
+    // items.forEach((item) { print(item.name); });
+    // _currentUser.inventory.forEach((itemId) {
+    //   items.removeWhere((item) => (item.id != itemId));
+    // });
+    // print('---');
+    // items.forEach((item) { print(item.name); });
+    _currentUser.inventory.forEach((itemId) {
+      userItems.add(items.firstWhere((item) => (item.id == itemId)));
+    });
+    return userItems;
+  }
+
+  void _showInventory() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          backgroundColor: HexColor('1cb0f6'),
+          title: Text(
+            "Vật phẩm hiện có",
+            style: TextStyle(
+              fontFamily: 'Quicksand',
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
+          // content: Text('Bạn có muốn mua "' + item.name + '" với giá ' + item.price.toString() + ' lingots?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Chạm giữ để xem miêu tả',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Quicksand'
+                ),
+              ),
+              SizedBox( height: 16.0 ),
+              Container(
+                height: 230,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      ...getUserBoughtItems().map<Widget>((item) => (
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.fromLTRB(10, 10, 16, 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.0)
+                          ),
+                          // height: 50,
+                          child: Tooltip(
+                            // onLongPress: () { print('long press'); },
+                            message: item.description,
+                            // verticalOffset: 20,
+                            showDuration: Duration(minutes: 5),
+                            margin: EdgeInsets.only(left: 80, right: 80),
+                            padding: EdgeInsets.all(20),
+                            textStyle: TextStyle(
+                              fontFamily: 'Quicksand',
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Image.network(
+                                  item.imgUrl,
+                                  width: 50,
+                                ),
+                                SizedBox(width: 10,),
+                                Expanded(
+                                  child: Text(
+                                    item.name,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Quicksand',
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        )
+                      )).toList()
+                    ],
+                  ),
+                )
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: new Text(
+                "Đóng".toUpperCase(),
+                style: TextStyle(
+                  fontFamily: 'Quicksand',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                ),
+              ),
+              onPressed: () {
+                // TODO: Implement this shit
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showDialog(item) {
@@ -317,8 +450,9 @@ class _ShopWidgetState extends State<ShopWidget> {
       child: Stack(
         children: <Widget>[
           (_itemGroups != null)
-              ? Container(
-                  child: ListView(
+              ? Stack(
+                  children: <Widget>[
+                    ListView(
                       padding: EdgeInsets.fromLTRB(20, 55, 20, 30),
                       shrinkWrap: true,
                       children: <Widget>[
@@ -329,6 +463,16 @@ class _ShopWidgetState extends State<ShopWidget> {
                         // renderItemGroup(powerUps),
                         // renderItemGroup(loremIpsum),
                       ]),
+                    Container(
+                      alignment: AlignmentDirectional.bottomEnd,
+                      padding: EdgeInsets.all(20.0),
+                      child: FloatingActionButton(
+                        onPressed: () { _showInventory(); },
+                        backgroundColor: HexColor('ff4b4b'),
+                        child: Icon(Icons.apps),
+                      ),
+                    ),
+                  ]
                 )
               : Container(
                   // height: double.infinity,
