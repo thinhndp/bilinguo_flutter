@@ -202,7 +202,8 @@ class _ShopWidgetState extends State<ShopWidget> {
         // return object of type Dialog
         return AlertDialog(
           title: Text(
-            "Yo wise choice right there mah nig",
+            // "Yo wise choice right there mah nig",
+            "Mua vật phẩm",
             style: TextStyle(
               fontFamily: 'Quicksand',
               fontWeight: FontWeight.bold
@@ -218,7 +219,8 @@ class _ShopWidgetState extends State<ShopWidget> {
               children: <Widget>[
                 // Image.network("https://hotemoji.com/images/dl/h/put-litter-in-its-place-symbol-emoji-by-twitter.png"),
                 // SizedBox(height: 6.0,),
-                Image.asset('assets/right-choice.png', width: 100.0,),
+                // Image.asset('assets/right-choice.png', width: 100.0,),
+                Image.network(item.imgUrl, width: 100.0,),
                 SizedBox(height: 16.0,),
                 RichText(
                   text: TextSpan(
@@ -248,7 +250,8 @@ class _ShopWidgetState extends State<ShopWidget> {
           actions: <Widget>[
             FlatButton(
               child: new Text(
-                "Đéo.".toUpperCase(),
+                // "Đéo.".toUpperCase(),
+                "Không".toUpperCase(),
                 style: TextStyle(
                   fontFamily: 'Quicksand',
                   fontWeight: FontWeight.bold,
@@ -260,7 +263,8 @@ class _ShopWidgetState extends State<ShopWidget> {
             ),
             FlatButton(
               child: new Text(
-                "Mua cả họ m".toUpperCase(),
+                // "Mua cả họ m".toUpperCase(),
+                "Mua".toUpperCase(),
                 style: TextStyle(
                   fontFamily: 'Quicksand',
                   fontWeight: FontWeight.bold,

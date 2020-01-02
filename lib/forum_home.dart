@@ -490,7 +490,8 @@ class ForumHomeScreen extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.search),
               tooltip: 'Tìm kiếm bài viết',
-              color: HexColor("1cb0f6"),
+              // color: HexColor("1cb0f6"),
+              color: Colors.white,
               onPressed: () {},
             ),
           )

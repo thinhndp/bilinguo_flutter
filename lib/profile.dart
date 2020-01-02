@@ -10,11 +10,13 @@ import 'package:path/path.dart' as Path;
 import 'package:bilinguo_flutter/models/AppState.dart';
 import './models/User.dart';
 import 'package:redux/redux.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ViewModel viewModel;
+  final GlobalKey<NavigatorState> _navigatorKey;
 
-  ProfileScreen(this.viewModel);
+  ProfileScreen(this.viewModel, this._navigatorKey);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -26,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // String _uploadedFileURL;
   bool _isUpdatingUserInfo = false;
   User _currentUser;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -252,6 +255,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  _handleSignOut() {
+    _auth.signOut();
+    widget.viewModel.onSetCurrentUser(null);
+    widget._navigatorKey.currentState.pop();
+  }
+
   _renderButtons() {
     return Column(
       children: <Widget>[
@@ -294,6 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onPressed: () {
                   //Navigator.of(context).pushNamed(HomePage.tag);
+                  _handleSignOut();
                 },
                 padding: EdgeInsets.fromLTRB(16.0, 14.0, 16.0, 14.0),
                 elevation: 4,

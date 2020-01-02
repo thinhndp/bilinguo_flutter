@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _children.add(
       StoreConnector(
         converter: (Store<AppState> store) => ViewModel.create(store),
-        builder: (context, ViewModel viewModel) => ProfileScreen(viewModel)
+        builder: (context, ViewModel viewModel) => ProfileScreen(viewModel, widget._navigatorKey)
       )
     );
 
