@@ -1,4 +1,5 @@
 import 'package:bilinguo_flutter/models/Achievement.dart';
+import 'package:bilinguo_flutter/models/AppState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'mock-data.dart';
@@ -6,6 +7,10 @@ import 'mock-data.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class AchievementScreen extends StatefulWidget {
+  final ViewModel _viewModel;
+  
+  AchievementScreen(this._viewModel);
+
   @override
   _AchievementScreenState createState() => _AchievementScreenState();
 }
@@ -63,7 +68,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
               Image.asset('assets/icons/lingot.png', width: 30),
               SizedBox(width: 0,),
               Text(
-                '66',
+                widget._viewModel.currentUser.fortune.toString(),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xffff4b4b),
@@ -88,7 +93,12 @@ class _AchievementScreenState extends State<AchievementScreen> {
               children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100.0),
-                  child: Image.asset('assets/anonymous-avatar.jpg', height: 80,),
+                  child: Image.network(
+                    widget._viewModel.currentUser.profilePicture,
+                    height: 80,
+                    width: 80,
+                    fit: BoxFit.cover
+                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -109,7 +119,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
           Expanded(
             child: Container(
               child: Text(
-                  'Minh Ho (chiminhho1998)',
+                  '${widget._viewModel.currentUser.displayName} (${widget._viewModel.currentUser.email})',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 )
             )

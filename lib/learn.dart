@@ -10,8 +10,9 @@ import 'package:http/http.dart' as http;
 
 class LearnScreen extends StatelessWidget {
   final GlobalKey<NavigatorState> _navigatorKey;
+  final ViewModel _viewModel;
 
-  LearnScreen(this._navigatorKey);
+  LearnScreen(this._navigatorKey, this._viewModel);
 
   renderHoneyYouShouldSeeMeInACrown(course) {
     return course.levelReached > 0 ?
@@ -39,6 +40,25 @@ class LearnScreen extends StatelessWidget {
       ] ;
   }
 
+  void _showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator()
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   renderCourseImage(BuildContext context, Course course) {
     return StoreConnector(
       converter: (Store<AppState> store) => ViewModel.create(store),
@@ -52,8 +72,8 @@ class LearnScreen extends StatelessWidget {
           ),
         ),
         onTap: () async {
-          // viewModel.currentUser
-          // final tokenStr = (await viewModel.currentUser.getIdToken()).token;
+          _showLoading(context);
+
           print('onTap');
           http.post(
             'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/startLearnSession',
@@ -62,37 +82,18 @@ class LearnScreen extends StatelessWidget {
           )
             .then((response) {
               print(response.body);
-              // Navigator.pushNamed(context, '/learn-detail');
               _navigatorKey.currentState.pushNamed('/learn-detail');
+
+              // Navigator.pop(context); // Hide Dialog
             })
             .catchError((err) {
               print(err);
+              
+              // Navigator.pop(context); // Hide Dialog
             });
         },
       )
     );
-      // GestureDetector(
-      //   child: Container(
-      //     color: HexColor(course.backgroundColor),
-      //     child: Image.asset(
-      //       'assets/' + course.unlockedIconUrl,
-      //       width: 70,
-      //       fit: BoxFit.cover,
-      //     ),
-      //   ),
-      //   onTap: () {
-
-      //   },
-      // )
-      //   :
-      // Container(
-      //   color: Color(0xffe5e5e5),
-      //   child: Image.asset(
-      //     'assets/' + course.lockedIconUrl,
-      //     width: 70,
-      //     fit: BoxFit.cover,
-      //   ),
-      // );
   }
 
   renderCourseGroup(BuildContext context, courseGroup) {
@@ -171,8 +172,8 @@ class LearnScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Image.asset(
-                    'assets/flags/flag-american.png',
-                    height: 30
+                  'assets/flags/flag-american.png',
+                  height: 30
                 ),
                 Row(
                   children: <Widget>[
@@ -205,7 +206,7 @@ class LearnScreen extends StatelessWidget {
                     Image.asset('assets/icons/lingot.png', width: 30),
                     SizedBox(width: 0,),
                     Text(
-                      '66',
+                      _viewModel.currentUser.fortune.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff4b4b),
