@@ -305,6 +305,26 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   }
 
   Widget _buildHeader() {
+    String getQuestionHeader() {
+      if (_question == null) {
+        return '';
+      }
+
+      if (_question['type'] == 'vie-eng-vocab-picking') {
+        return 'Chọn từ đúng';
+      }
+      
+      if (_question['type'] == 'eng-vie-sentence-picking') {
+        return 'Chọn câu đúng';
+      }
+      
+      if (_question['type'] == 'eng-vie-sentence-ordering') {
+        return 'Sắp xếp lại câu';
+      }
+
+      return '';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -313,11 +333,14 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
           percent: _questionsAnswered / _questionsTotal,
           backgroundColor: Colors.grey[350],
           progressColor: Colors.blue[300],
+          animation: true,
+          animateFromLastPercent: true,
+          animationDuration: 200,
         ),
         SizedBox(height: 15,),
-        Text('Sắp xếp lại câu', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),
+        Text(getQuestionHeader(), style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),
         SizedBox(height: 15,),
-        Text(_question != null ? _question['questionStr'] : 'Câu hỏi', style: TextStyle(color: Colors.black87, fontSize: 20)),
+        Text(_question != null ? _question['questionStr'] : '', style: TextStyle(color: Colors.black87, fontSize: 20)),
       ],
     );
   }
@@ -339,9 +362,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
               _selectedVocabIndex = i;
             });
           },
-          child: Container(
-            height: 150,
-            width: 125,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            height: 140,
+            width: 120,
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
             decoration: BoxDecoration(
               color: isSelected ? Colors.lightBlue[100] : Colors.white,
@@ -393,7 +417,8 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
               _selectedSentenceIndex = i;
             });
           },
-          child: Container(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
             width: double.infinity,
             padding: EdgeInsets.all(15),
             margin: EdgeInsets.only(bottom: 10),
@@ -524,12 +549,14 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
     if (_question['type'] == 'eng-vie-sentence-picking') {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: _renderSentenceChoices(),
       );
     }
 
     if (_question['type'] == 'eng-vie-sentence-ordering') {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
