@@ -10,8 +10,9 @@ import 'package:http/http.dart' as http;
 
 class LearnScreen extends StatelessWidget {
   final GlobalKey<NavigatorState> _navigatorKey;
+  final ViewModel _viewModel;
 
-  LearnScreen(this._navigatorKey);
+  LearnScreen(this._navigatorKey, this._viewModel);
 
   renderHoneyYouShouldSeeMeInACrown(course) {
     return course.levelReached > 0 ?
@@ -205,7 +206,7 @@ class LearnScreen extends StatelessWidget {
                     Image.asset('assets/icons/lingot.png', width: 30),
                     SizedBox(width: 0,),
                     Text(
-                      '66',
+                      _viewModel.currentUser.fortune.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xffff4b4b),

@@ -50,8 +50,20 @@ class _HomeScreenState extends State<HomeScreen> {
     // print('-----');
 
     // Temp. TODO: Fix
-    _children.add(LearnScreen(widget._navigatorKey));
-    _children.add(AchievementScreen());
+    // _children.add(LearnScreen(widget._navigatorKey));
+    _children.add(
+      StoreConnector(
+        converter: (Store<AppState> store) => ViewModel.create(store),
+        builder: (context, ViewModel viewModel) => LearnScreen(widget._navigatorKey, viewModel)
+      )
+    );
+    // _children.add(AchievementScreen());
+    _children.add(
+      StoreConnector(
+        converter: (Store<AppState> store) => ViewModel.create(store),
+        builder: (context, ViewModel viewModel) => AchievementScreen(viewModel)
+      )
+    );
     _children.add(ForumScreen());
     _children.add(ShopScreen());
     // _children.add(ProfileScreen(widget._viewModel));

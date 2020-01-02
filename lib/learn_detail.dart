@@ -141,6 +141,10 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
 
     print(answer);
 
+    if (answer == '') {
+      return;
+    }
+
     setState(() {
       _isLoadingCheckButton = true;
     });
@@ -219,7 +223,42 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
   }
 
   void _showSummaryDialog(int questionsCorrect, int questionsTotal, DateTime startAt) {
+    Color getAccuracyColor(double accuracy) {
+      if (accuracy >= 0.8) {
+        return Colors.green;
+      } else if (accuracy >= 0.6) {
+        return Colors.blue;
+      } else if (accuracy >= 0.4) {
+        return Colors.orange;
+      } else {
+        return Colors.red;
+      }
+    }
+    Color getProgressBarColor(double accuracy) {
+      if (accuracy >= 0.8) {
+        return Colors.green[300];
+      } else if (accuracy >= 0.6) {
+        return Colors.blue[300];
+      } else if (accuracy >= 0.4) {
+        return Colors.orange[300];
+      } else {
+        return Colors.red[400];
+      }
+    }
+    String getAccuracyText(double accuracy) {
+      if (accuracy >= 0.8) {
+        return 'Tuyệt vời';
+      } else if (accuracy >= 0.6) {
+        return 'Rất tốt';
+      } else if (accuracy >= 0.4) {
+        return 'Khá lắm';
+      } else {
+        return 'Tạm được';
+      }
+    }
+
     double accuracy = questionsTotal != 0 ? questionsCorrect / questionsTotal : 0;
+    // accuracy = 0.5;
     DateTime now = new DateTime.now();
     Duration completionTime = now.difference(startAt);
 
@@ -228,7 +267,7 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Summary"),
+          title: new Text('Tổng kết'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,17 +283,17 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
                         '${accuracy * 100}%',
                         style: TextStyle(
                           fontSize: 24,
-                          color: Colors.green[600],
+                          color: getAccuracyColor(accuracy),
                         ),
                       ),
-                      progressColor: Colors.green[400],
+                      progressColor: getProgressBarColor(accuracy),
                       animation: true,
                     ),
                     Text(
-                      'Excellent',
+                      getAccuracyText(accuracy),
                       style: TextStyle(
                         fontSize: 30,
-                        color: Colors.green[600],
+                        color: getAccuracyColor(accuracy),
                         fontWeight: FontWeight.bold
                       )
                     ),
@@ -270,17 +309,17 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('Correct Answers:', style: TextStyle(color: Colors.black87),),
+                  Text('Số câu đúng:', style: TextStyle(color: Colors.black87),),
                   Text(
                     questionsCorrect.toString() + '/' + questionsTotal.toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
+                    style: TextStyle(fontWeight: FontWeight.bold, color: getAccuracyColor(accuracy))
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('Completion Time:', style: TextStyle(color: Colors.black87),),
+                  Text('Thời gian:', style: TextStyle(color: Colors.black87),),
                   Text(
                     Helper.printDuration(completionTime),
                     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)
@@ -457,12 +496,21 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 2),
-            left: BorderSide(color: Colors.grey, width: 2),
-            right: BorderSide(color: Colors.grey, width: 2),
-            bottom: BorderSide(color: Colors.grey, width: 4),
-          ),
+          // border: Border(
+          //   top: BorderSide(color: Colors.grey, width: 2),
+          //   left: BorderSide(color: Colors.grey, width: 2),
+          //   right: BorderSide(color: Colors.grey, width: 2),
+          //   bottom: BorderSide(color: Colors.grey, width: 4),
+          // ),
+          color: Colors.white,
+          border: Border.all(color: Colors.grey, width: 2),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(0, 2),
+            )
+          ],
           // borderRadius: BorderRadius.circular(10),
         ),
         margin: EdgeInsets.all(5),
@@ -493,13 +541,21 @@ class _LearnDetailScreenState extends State<LearnDetailScreen> {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-          color: _selectedIndexList.contains(index) ? Colors.grey : Colors.transparent,
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 2),
-            left: BorderSide(color: Colors.grey, width: 2),
-            right: BorderSide(color: Colors.grey, width: 2),
-            bottom: BorderSide(color: Colors.grey, width: 4),
-          ),
+          color: _selectedIndexList.contains(index) ? Colors.grey : Colors.white,
+          // border: Border(
+          //   top: BorderSide(color: Colors.grey, width: 2),
+          //   left: BorderSide(color: Colors.grey, width: 2),
+          //   right: BorderSide(color: Colors.grey, width: 2),
+          //   bottom: BorderSide(color: Colors.grey, width: 4),
+          // ),
+          border: Border.all(color: Colors.grey, width: 2),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(0, 2),
+            )
+          ],
           // borderRadius: BorderRadius.circular(10),
         ),
         margin: EdgeInsets.all(5),
