@@ -37,7 +37,7 @@ void main() {
             converter: (Store<AppState> store) => ViewModel.create(store),
             builder: (context, ViewModel viewModel) => HomeScreen(navigatorKey, viewModel),
           ),
-          '/sign-in': (context) => SignInScreen(),
+          '/sign-in': (context) => SignInScreen(navigatorKey),
           // '/learn-detail': (context) => LearnDetailScreen(),
           '/learn-detail': (context) => StoreConnector(
             converter: (Store<AppState> store) => ViewModel.create(store),
@@ -203,44 +203,27 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Container (
-                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-                width: double.infinity,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0)
-                  ),
-                  elevation: 4,
-                  padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/learn-detail');
-                    // final tokenStr = (await widget._viewModel.currentUser.getIdToken()).token;
-
-                    // print('called');
-
-                    // http.post(
-                    //   'https://us-central1-fb-cloud-functions-demo-4de69.cloudfunctions.net/getSessionQuestion',
-                    //   headers: { 'Authorization': 'Bearer ' + tokenStr },
-                    //   body: {  }
-                    // )
-                    //   .then((response) {
-                    //     print('complete');
-                    //     print(response.body);
-                    //   })
-                    //   .catchError((err) {
-                    //     print('error');
-                    //     print(err);
-                    //   });
-                  },
-                  color: Colors.white,
-                  textColor: Colors.lightGreen,
-                  child: Text(
-                      'Test',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+              // Container (
+              //   padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+              //   width: double.infinity,
+              //   child: RaisedButton(
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(16.0)
+              //     ),
+              //     elevation: 4,
+              //     padding: EdgeInsets.fromLTRB(0, 16.0, 0, 16.0),
+              //     onPressed: () async {
+              //       Navigator.pushNamed(context, '/learn-detail');
+              //     },
+              //     color: Colors.white,
+              //     textColor: Colors.lightGreen,
+              //     child: Text(
+              //         'Test',
+              //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 16),
             ],
           )
         )
